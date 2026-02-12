@@ -37,8 +37,8 @@ function validateAdminPassword(): bool {
 }
 
 function validateImageKey(string $key): bool {
-    $validKeys = ['player', 'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6', 
-                  'beer', 'vodka', 'powerup', 'scared', 'logo'];
+    $validKeys = ['player1', 'player2', 'player3', 'player4', 'player5', 'player6', 
+                  'enemy', 'beer', 'vodka', 'powerup', 'scared', 'logo'];
     return in_array($key, $validKeys, true);
 }
 

@@ -319,70 +319,101 @@
                 • Se non carichi un'immagine, verrà usata l'emoji
             </div>
 
-            <!-- GIOCATORE -->
+            <!-- NEMICO -->
             <div class="character-card">
-                <h4>🎮 Giocatore Principale</h4>
+                <h4>👨‍🏫 Nemico (Professore)</h4>
                 <div class="character-row">
                     <div class="form-group">
-                        <label>Emoji fallback</label>
-                        <input type="text" id="emoji-player" value="🎓" maxlength="4">
+                        <label>Emoji</label>
+                        <input type="text" id="emoji-enemy" value="👨‍🏫" placeholder="Qualsiasi emoji">
                     </div>
                     <div class="form-group">
                         <label>Immagine (64x64 px)</label>
-                        <div class="image-upload-box" id="upload-player" onclick="triggerUpload('player')">
-                            <div class="image-upload-placeholder" id="placeholder-player">📷</div>
-                            <img class="image-preview" id="preview-player" style="display:none">
+                        <div class="image-upload-box" id="upload-enemy" onclick="triggerUpload('enemy')">
+                            <div class="image-upload-placeholder" id="placeholder-enemy">📷</div>
+                            <img class="image-preview" id="preview-enemy" style="display:none">
                             <div class="image-info">Clicca per caricare</div>
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('player')" style="display:none" id="clear-player">🗑️ Rimuovi</button>
-                        <input type="file" id="file-player" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player')">
+                        <button class="clear-image-btn" onclick="clearImage('enemy')" style="display:none" id="clear-enemy">🗑️ Rimuovi</button>
+                        <input type="file" id="file-enemy" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy')">
                     </div>
+                </div>
+                <div class="form-group">
+                    <label>Emoji Nemico Spaventato</label>
+                    <input type="text" id="emoji-scared" value="😰" placeholder="Emoji quando invincibile">
+                    <div class="image-upload-box" id="upload-scared" onclick="triggerUpload('scared')" style="margin-top:8px">
+                        <div class="image-upload-placeholder" id="placeholder-scared">📷</div>
+                        <img class="image-preview" id="preview-scared" style="display:none">
+                    </div>
+                    <button class="clear-image-btn" onclick="clearImage('scared')" style="display:none" id="clear-scared">🗑️</button>
+                    <input type="file" id="file-scared" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'scared')">
                 </div>
             </div>
 
-            <!-- NEMICI -->
+            <!-- GIOCATORI PER LIVELLO -->
             <div class="character-card">
-                <h4>👨‍🏫 Nemici (Professori)</h4>
+                <h4>🎓 Giocatori (cambiano per livello)</h4>
+                <p style="opacity:0.7;margin-bottom:15px;">Personalizza l'aspetto del giocatore per ogni livello</p>
                 <div class="emoji-grid">
                     <div class="form-group">
-                        <label>Nemico 1</label>
-                        <input type="text" id="enemy-1" value="👨‍🏫" maxlength="8" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-enemy1" onclick="triggerUpload('enemy1')">
-                            <div class="image-upload-placeholder" id="placeholder-enemy1">📷</div>
-                            <img class="image-preview" id="preview-enemy1" style="display:none">
+                        <label>Livello 1</label>
+                        <input type="text" id="player-1" value="🎓" placeholder="Emoji livello 1" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player1" onclick="triggerUpload('player1')">
+                            <div class="image-upload-placeholder" id="placeholder-player1">📷</div>
+                            <img class="image-preview" id="preview-player1" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('enemy1')" style="display:none" id="clear-enemy1">🗑️</button>
-                        <input type="file" id="file-enemy1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy1')">
+                        <button class="clear-image-btn" onclick="clearImage('player1')" style="display:none" id="clear-player1">🗑️</button>
+                        <input type="file" id="file-player1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player1')">
                     </div>
                     <div class="form-group">
-                        <label>Nemico 2</label>
-                        <input type="text" id="enemy-2" value="👩‍🏫" maxlength="8" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-enemy2" onclick="triggerUpload('enemy2')">
-                            <div class="image-upload-placeholder" id="placeholder-enemy2">📷</div>
-                            <img class="image-preview" id="preview-enemy2" style="display:none">
+                        <label>Livello 2</label>
+                        <input type="text" id="player-2" value="🎓" placeholder="Emoji livello 2" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player2" onclick="triggerUpload('player2')">
+                            <div class="image-upload-placeholder" id="placeholder-player2">📷</div>
+                            <img class="image-preview" id="preview-player2" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('enemy2')" style="display:none" id="clear-enemy2">🗑️</button>
-                        <input type="file" id="file-enemy2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy2')">
+                        <button class="clear-image-btn" onclick="clearImage('player2')" style="display:none" id="clear-player2">🗑️</button>
+                        <input type="file" id="file-player2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player2')">
                     </div>
                     <div class="form-group">
-                        <label>Nemico 3</label>
-                        <input type="text" id="enemy-3" value="🧑‍🏫" maxlength="8" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-enemy3" onclick="triggerUpload('enemy3')">
-                            <div class="image-upload-placeholder" id="placeholder-enemy3">📷</div>
-                            <img class="image-preview" id="preview-enemy3" style="display:none">
+                        <label>Livello 3</label>
+                        <input type="text" id="player-3" value="🎓" placeholder="Emoji livello 3" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player3" onclick="triggerUpload('player3')">
+                            <div class="image-upload-placeholder" id="placeholder-player3">📷</div>
+                            <img class="image-preview" id="preview-player3" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('enemy3')" style="display:none" id="clear-enemy3">🗑️</button>
-                        <input type="file" id="file-enemy3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy3')">
+                        <button class="clear-image-btn" onclick="clearImage('player3')" style="display:none" id="clear-player3">🗑️</button>
+                        <input type="file" id="file-player3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player3')">
                     </div>
                     <div class="form-group">
-                        <label>Nemico 4</label>
-                        <input type="text" id="enemy-4" value="👴" maxlength="8" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-enemy4" onclick="triggerUpload('enemy4')">
-                            <div class="image-upload-placeholder" id="placeholder-enemy4">📷</div>
-                            <img class="image-preview" id="preview-enemy4" style="display:none">
+                        <label>Livello 4</label>
+                        <input type="text" id="player-4" value="🎓" placeholder="Emoji livello 4" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player4" onclick="triggerUpload('player4')">
+                            <div class="image-upload-placeholder" id="placeholder-player4">📷</div>
+                            <img class="image-preview" id="preview-player4" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('enemy4')" style="display:none" id="clear-enemy4">🗑️</button>
-                        <input type="file" id="file-enemy4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy4')">
+                        <button class="clear-image-btn" onclick="clearImage('player4')" style="display:none" id="clear-player4">🗑️</button>
+                        <input type="file" id="file-player4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player4')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 5</label>
+                        <input type="text" id="player-5" value="🎓" placeholder="Emoji livello 5" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player5" onclick="triggerUpload('player5')">
+                            <div class="image-upload-placeholder" id="placeholder-player5">📷</div>
+                            <img class="image-preview" id="preview-player5" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('player5')" style="display:none" id="clear-player5">🗑️</button>
+                        <input type="file" id="file-player5" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player5')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 6+</label>
+                        <input type="text" id="player-6" value="🎓" placeholder="Emoji livello 6+" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-player6" onclick="triggerUpload('player6')">
+                            <div class="image-upload-placeholder" id="placeholder-player6">📷</div>
+                            <img class="image-preview" id="preview-player6" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('player6')" style="display:none" id="clear-player6">🗑️</button>
+                        <input type="file" id="file-player6" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player6')">
                     </div>
                 </div>
             </div>
@@ -393,7 +424,7 @@
                 <div class="emoji-grid">
                     <div class="form-group">
                         <label>Oggetto Base (10 pts)</label>
-                        <input type="text" id="emoji-beer" value="🍺" maxlength="4" style="margin-bottom:8px">
+                        <input type="text" id="emoji-beer" value="🍺" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
                         <div class="image-upload-box" id="upload-beer" onclick="triggerUpload('beer')">
                             <div class="image-upload-placeholder" id="placeholder-beer">📷</div>
                             <img class="image-preview" id="preview-beer" style="display:none">
@@ -403,7 +434,7 @@
                     </div>
                     <div class="form-group">
                         <label>Oggetto Bonus (50 pts)</label>
-                        <input type="text" id="emoji-vodka" value="🍾" maxlength="4" style="margin-bottom:8px">
+                        <input type="text" id="emoji-vodka" value="🍾" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
                         <div class="image-upload-box" id="upload-vodka" onclick="triggerUpload('vodka')">
                             <div class="image-upload-placeholder" id="placeholder-vodka">📷</div>
                             <img class="image-preview" id="preview-vodka" style="display:none">
@@ -413,7 +444,7 @@
                     </div>
                     <div class="form-group">
                         <label>Power-Up</label>
-                        <input type="text" id="emoji-powerup" value="📜" maxlength="4" style="margin-bottom:8px">
+                        <input type="text" id="emoji-powerup" value="📜" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
                         <div class="image-upload-box" id="upload-powerup" onclick="triggerUpload('powerup')">
                             <div class="image-upload-placeholder" id="placeholder-powerup">📷</div>
                             <img class="image-preview" id="preview-powerup" style="display:none">
@@ -698,29 +729,29 @@
                 document.getElementById('color-wall').value = config.colors.wall || '#1a1a3e';
             }
             if (config.emojis) {
-                document.getElementById('emoji-player').value = config.emojis.player || '🎓';
+                document.getElementById('emoji-enemy').value = config.emojis.enemy || '👨‍🏫';
                 document.getElementById('emoji-beer').value = config.emojis.beer || '🍺';
                 document.getElementById('emoji-vodka').value = config.emojis.vodka || '🍾';
                 document.getElementById('emoji-powerup').value = config.emojis.powerup || '📜';
                 document.getElementById('emoji-scared').value = config.emojis.scared || '😰';
-                if (config.emojis.enemies) {
-                    config.emojis.enemies.forEach((e, i) => {
-                        const el = document.getElementById('enemy-' + (i + 1));
+                if (config.emojis.players) {
+                    config.emojis.players.forEach((e, i) => {
+                        const el = document.getElementById('player-' + (i + 1));
                         if (el) el.value = e;
                     });
                 }
             }
             // Load images (now URLs from server)
             if (config.images) {
-                if (config.images.player) loadImagePreview('player', config.images.player);
+                if (config.images.enemy) loadImagePreview('enemy', config.images.enemy);
                 if (config.images.beer) loadImagePreview('beer', config.images.beer);
                 if (config.images.vodka) loadImagePreview('vodka', config.images.vodka);
                 if (config.images.powerup) loadImagePreview('powerup', config.images.powerup);
                 if (config.images.scared) loadImagePreview('scared', config.images.scared);
                 if (config.images.logo) loadImagePreview('logo', config.images.logo);
-                if (config.images.enemies) {
-                    config.images.enemies.forEach((url, i) => {
-                        if (url) loadImagePreview('enemy' + (i + 1), url);
+                if (config.images.players) {
+                    config.images.players.forEach((url, i) => {
+                        if (url) loadImagePreview('player' + (i + 1), url);
                     });
                 }
             }
@@ -753,16 +784,18 @@
                     wall: document.getElementById('color-wall').value
                 },
                 emojis: {
-                    player: document.getElementById('emoji-player').value,
+                    enemy: document.getElementById('emoji-enemy').value,
                     beer: document.getElementById('emoji-beer').value,
                     vodka: document.getElementById('emoji-vodka').value,
                     powerup: document.getElementById('emoji-powerup').value,
                     scared: document.getElementById('emoji-scared').value,
-                    enemies: [
-                        document.getElementById('enemy-1').value,
-                        document.getElementById('enemy-2').value,
-                        document.getElementById('enemy-3').value,
-                        document.getElementById('enemy-4').value
+                    players: [
+                        document.getElementById('player-1').value,
+                        document.getElementById('player-2').value,
+                        document.getElementById('player-3').value,
+                        document.getElementById('player-4').value,
+                        document.getElementById('player-5').value,
+                        document.getElementById('player-6').value
                     ]
                 },
                 uiIcons: {
@@ -780,6 +813,25 @@
             // Aggiungi logo se presente
             if (uploadedImages.logo) {
                 config.event.logo = uploadedImages.logo;
+            }
+            
+            // Aggiungi immagini personaggi se presenti
+            if (Object.keys(uploadedImages).length > 0) {
+                config.images = {
+                    enemy: uploadedImages.enemy || null,
+                    beer: uploadedImages.beer || null,
+                    vodka: uploadedImages.vodka || null,
+                    powerup: uploadedImages.powerup || null,
+                    scared: uploadedImages.scared || null,
+                    players: [
+                        uploadedImages.player1 || null,
+                        uploadedImages.player2 || null,
+                        uploadedImages.player3 || null,
+                        uploadedImages.player4 || null,
+                        uploadedImages.player5 || null,
+                        uploadedImages.player6 || null
+                    ]
+                };
             }
             
             return config;
@@ -942,7 +994,25 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
+        // Carica immagini esistenti dal server
+        async function loadExistingImages() {
+            try {
+                const res = await fetch('api/images.php');
+                const data = await res.json();
+                
+                if (data.success && data.images) {
+                    data.images.forEach(img => {
+                        uploadedImages[img.image_key] = img.url;
+                    });
+                    console.log('Loaded existing images:', uploadedImages);
+                }
+            } catch (e) {
+                console.log('Could not load existing images:', e);
+            }
+        }
+
         // Initialize
+        loadExistingImages();
         loadConfig();
         loadLeaderboard();
     </script>

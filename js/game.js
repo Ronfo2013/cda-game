@@ -328,13 +328,13 @@ const Game = {
 
         for (let i = 0; i < numEnemies; i++) {
             const pos = ENEMY_START_POSITIONS[i % ENEMY_START_POSITIONS.length];
-            const baseDelay = CONFIG.ENEMY_TYPES[i % CONFIG.ENEMY_TYPES.length].baseDelay;
+            // Base delay variabile tra 14 e 22 in base all'indice del nemico
+            const baseDelay = 14 + (i * 2);
             const moveDelay = Math.max(11, baseDelay - speedBonus + profile.enemyDelayBonus);
             
             this.enemies.push({
                 x: pos.x,
                 y: pos.y,
-                type: CONFIG.ENEMY_TYPES[i % CONFIG.ENEMY_TYPES.length],
                 direction: { x: 0, y: -1 },
                 scared: false,
                 moveTimer: 0,
@@ -595,18 +595,23 @@ const Game = {
         const size = this.tileSize * 1.3;
         const offset = (this.tileSize - size) / 2;
         
+        // Determina quale player emoji/immagine usare in base al livello (0-indexed, max 5)
+        const playerIndex = Math.min(this.level - 1, 5);
+        const playerEmoji = CONFIG.EMOJI_PLAYERS[playerIndex] || CONFIG.EMOJI_PLAYERS[0];
+        const playerImage = GAME_IMAGES.players[playerIndex];
+        
         if (this.powerUpActive) {
             this.ctx.shadowColor = '#ffd700';
             this.ctx.shadowBlur = 20;
         }
         
-        if (GAME_IMAGES.player) {
-            this.ctx.drawImage(GAME_IMAGES.player, playerPx + offset, playerPy + offset, size, size);
+        if (playerImage) {
+            this.ctx.drawImage(playerImage, playerPx + offset, playerPy + offset, size, size);
         } else {
             this.ctx.font = `${size}px Arial`;
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(CONFIG.EMOJI_PLAYER, playerPx + this.tileSize/2, playerPy + this.tileSize/2);
+            this.ctx.fillText(playerEmoji, playerPx + this.tileSize/2, playerPy + this.tileSize/2);
         }
         
         this.ctx.shadowBlur = 0;
@@ -643,14 +648,14 @@ const Game = {
                 this.ctx.shadowColor = '#ff0000';
                 this.ctx.shadowBlur = 8;
                 
-                const enemyImage = GAME_IMAGES.enemies[index];
+                const enemyImage = GAME_IMAGES.enemy;
                 if (enemyImage) {
                     this.ctx.drawImage(enemyImage, enemyPx + offset, enemyPy + offset, size, size);
                 } else {
                     this.ctx.font = `${size}px Arial`;
                     this.ctx.textAlign = 'center';
                     this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(enemy.type.emoji, enemyPx + this.tileSize/2, enemyPy + this.tileSize/2);
+                    this.ctx.fillText(CONFIG.ENEMY_EMOJI, enemyPx + this.tileSize/2, enemyPy + this.tileSize/2);
                 }
                 
                 this.ctx.shadowBlur = 0;

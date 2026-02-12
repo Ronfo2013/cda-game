@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Applica icone UI dopo che config è caricato
     setTimeout(applyUIIcons, 100);
+    
+    // Avvia musica title screen
+    setTimeout(() => {
+        AudioManager.playTitleMusic();
+    }, 500);
 });
 
 // Applica icone UI dalla configurazione admin
@@ -45,7 +50,7 @@ function applyUIIcons() {
     // Istruzioni (usa emoji dai personaggi se disponibili)
     if (ADMIN_CONFIG.emojis) {
         setIcon('icon-inst-beer', ADMIN_CONFIG.emojis.beer);
-        setIcon('icon-inst-enemy', ADMIN_CONFIG.emojis.enemies?.[0]);
+        setIcon('icon-inst-enemy', ADMIN_CONFIG.emojis.enemy);
         setIcon('icon-inst-powerup', ADMIN_CONFIG.emojis.powerup);
         setIcon('icon-powerup-active', ADMIN_CONFIG.emojis.powerup);
     }
@@ -238,6 +243,7 @@ function actuallyStartGame() {
 // ========== GAME FLOW FUNCTIONS ==========
 
 function startGame() {
+    AudioManager.stopTitleMusic();  // Ferma musica title
     document.getElementById('title-screen').style.display = 'none';
     document.getElementById('game-container').classList.add('active');
     document.body.classList.add('in-game');
@@ -263,6 +269,7 @@ function goToTitle() {
     Game.running = false;
     Game.paused = false;
 
+    AudioManager.playTitleMusic();  // Riavvia musica title
     applyControlMode();
 }
 

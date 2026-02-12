@@ -49,14 +49,8 @@ const CONFIG = {
 
     // Enemies - valori di default, aggiornati da updateConfigFromAdmin()
     MAX_ENEMIES: 6,
-    ENEMY_TYPES: [
-        { emoji: '👨‍🏫', name: 'Prof. Mate', baseDelay: 18 },
-        { emoji: '👩‍🏫', name: 'Prof. Italiano', baseDelay: 22 },
-        { emoji: '🧑‍🏫', name: 'Prof. Inglese', baseDelay: 16 },
-        { emoji: '👴', name: 'Preside', baseDelay: 25 },
-        { emoji: '👨‍🔬', name: 'Prof. Scienze', baseDelay: 20 },
-        { emoji: '👩‍💼', name: 'Vicepreside', baseDelay: 14 }
-    ],
+    ENEMY_EMOJI: '👨‍🏫',
+    ENEMY_NAME: 'Professore',
 
     // Maze tiles
     TILE_EMPTY: 0,
@@ -66,7 +60,7 @@ const CONFIG = {
     TILE_POWERUP: 4,
 
     // Emojis - valori di default, aggiornati da updateConfigFromAdmin()
-    EMOJI_PLAYER: '🎓',
+    EMOJI_PLAYERS: ['🎓', '🎓', '🎓', '🎓', '🎓', '🎓'],  // Per livelli 1-6+
     EMOJI_SCARED_ENEMY: '😰',
     EMOJI_BEER: '🍺',
     EMOJI_VODKA: '🍾',
@@ -129,12 +123,12 @@ const PLAYER_START = { x: 6, y: 12 };
 // ============================================
 
 const GAME_IMAGES = {
-    player: null,
+    enemy: null,
     beer: null,
     vodka: null,
     powerup: null,
     scared: null,
-    enemies: [null, null, null, null, null, null]
+    players: [null, null, null, null, null, null]  // Per livelli 1-6+
 };
 
 // Precarica immagine da URL (server) o base64
@@ -157,17 +151,17 @@ function updateConfigFromAdmin(config) {
     
     // Aggiorna emoji
     if (config.emojis) {
-        if (config.emojis.player) CONFIG.EMOJI_PLAYER = config.emojis.player;
+        if (config.emojis.enemy) CONFIG.ENEMY_EMOJI = config.emojis.enemy;
         if (config.emojis.scared) CONFIG.EMOJI_SCARED_ENEMY = config.emojis.scared;
         if (config.emojis.beer) CONFIG.EMOJI_BEER = config.emojis.beer;
         if (config.emojis.vodka) CONFIG.EMOJI_VODKA = config.emojis.vodka;
         if (config.emojis.powerup) CONFIG.EMOJI_POWERUP = config.emojis.powerup;
         
-        // Aggiorna emoji nemici
-        if (config.emojis.enemies && Array.isArray(config.emojis.enemies)) {
-            config.emojis.enemies.forEach((emoji, i) => {
-                if (emoji && CONFIG.ENEMY_TYPES[i]) {
-                    CONFIG.ENEMY_TYPES[i].emoji = emoji;
+        // Aggiorna emoji players per livello
+        if (config.emojis.players && Array.isArray(config.emojis.players)) {
+            config.emojis.players.forEach((emoji, i) => {
+                if (emoji && CONFIG.EMOJI_PLAYERS[i]) {
+                    CONFIG.EMOJI_PLAYERS[i] = emoji;
                 }
             });
         }
@@ -181,16 +175,16 @@ async function loadGameImages() {
     const images = ADMIN_CONFIG.images;
     
     // Carica immagini singole (ora sono URL dal server)
-    GAME_IMAGES.player = await preloadImage(images.player);
+    GAME_IMAGES.enemy = await preloadImage(images.enemy);
     GAME_IMAGES.beer = await preloadImage(images.beer);
     GAME_IMAGES.vodka = await preloadImage(images.vodka);
     GAME_IMAGES.powerup = await preloadImage(images.powerup);
     GAME_IMAGES.scared = await preloadImage(images.scared);
     
-    // Carica immagini nemici
-    if (images.enemies && Array.isArray(images.enemies)) {
-        for (let i = 0; i < images.enemies.length; i++) {
-            GAME_IMAGES.enemies[i] = await preloadImage(images.enemies[i]);
+    // Carica immagini players per livello
+    if (images.players && Array.isArray(images.players)) {
+        for (let i = 0; i < images.players.length; i++) {
+            GAME_IMAGES.players[i] = await preloadImage(images.players[i]);
         }
     }
     

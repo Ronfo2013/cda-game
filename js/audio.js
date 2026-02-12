@@ -153,6 +153,68 @@ const AudioManager = {
         this.playBeep(1000, 0.08, 0.2);
     },
     
+    // Title screen music - Retro 80s style
+    playTitleMusic() {
+        if (!this.musicEnabled || !this.audioUnlocked) return;
+        this.stopTitleMusic(); // Stop any existing
+        
+        const ctx = this.audioContext;
+        if (!ctx) return;
+        
+        // Sequenza melodica anni 80 stile arcade
+        const melody = [
+            { freq: 523.25, time: 0, duration: 0.15 },    // C
+            { freq: 659.25, time: 0.2, duration: 0.15 },  // E
+            { freq: 783.99, time: 0.4, duration: 0.15 },  // G
+            { freq: 1046.50, time: 0.6, duration: 0.3 },  // C alta
+            { freq: 987.77, time: 1.0, duration: 0.15 },  // B
+            { freq: 783.99, time: 1.2, duration: 0.15 },  // G
+            { freq: 659.25, time: 1.4, duration: 0.3 }    // E
+        ];
+        
+        const startTime = ctx.currentTime;
+        this.titleMusicNodes = [];
+        
+        melody.forEach(note => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = 'square'; // Stile retro
+            osc.frequency.value = note.freq;
+            
+            gain.gain.setValueAtTime(0, startTime + note.time);
+            gain.gain.linearRampToValueAtTime(0.08, startTime + note.time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + note.time + note.duration);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start(startTime + note.time);
+            osc.stop(startTime + note.time + note.duration);
+            
+            this.titleMusicNodes.push({ osc, gain });
+        });
+        
+        // Loop ogni 2 secondi
+        this.titleMusicInterval = setInterval(() => {
+            this.playTitleMusic();
+        }, 2000);
+    },
+    
+    stopTitleMusic() {
+        if (this.titleMusicInterval) {
+            clearInterval(this.titleMusicInterval);
+            this.titleMusicInterval = null;
+        }
+        if (this.titleMusicNodes) {
+            this.titleMusicNodes.forEach(({ osc, gain }) => {
+                try { osc.stop(); } catch(e) {}
+                try { gain.disconnect(); } catch(e) {}
+            });
+            this.titleMusicNodes = [];
+        }
+    },
+    
     // Toggle functions
     toggleSound() {
         this.soundEnabled = !this.soundEnabled;
