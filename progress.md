@@ -23,3 +23,28 @@ TODO / Next agent notes:
 - Frontend leaderboard aggiornato per usare API server con fallback locale se API down.
 - Aggiornati `README.md` e `INSTALL.txt` con file da caricare su IONOS + permessi cartella `data`.
 - Eseguiti check sintassi JS/PHP e smoke test GET/POST API con `php-cgi`.
+
+## Branch personalizzazione
+
+- Rimosse frecce tastiera, controlli solo swipe
+- Aggiunta overlay evento in background gioco (opacità 15%)
+- Creato pannello admin (`admin.html`) per personalizzare evento, colori, personaggi
+
+### Sistema immagini server-side (DB + upload)
+
+Implementato sistema per salvare immagini su server invece che localStorage:
+
+- **db.sql**: Schema MySQL con tabelle `game_images`, `game_config`, `event_info`, `theme_colors`, `game_characters`, `leaderboard`
+- **api/config.php**: API GET/POST per configurazione completa (evento, colori, emoji)
+- **api/images.php**: API POST/GET/DELETE per upload immagini (validazione tipo, max 100KB)
+- **api/db_config.php**: Configurazione database e costanti (password admin: `admin123`)
+- **upload/.htaccess**: Sicurezza cartella upload (solo immagini, no PHP)
+- **admin.html**: Aggiornato per usare API server con autenticazione X-Admin-Password
+- **js/config.js**: Carica config da `api/config.php` con fallback localStorage
+- **api/leaderboard.php**: Aggiunto metodo DELETE per svuotare classifica (richiede password admin)
+
+### Setup database:
+1. Crea database MySQL `centogiorni_game`
+2. Esegui `db.sql` per creare tabelle
+3. Modifica credenziali in `api/db_config.php`
+4. La password admin di default è `admin123`

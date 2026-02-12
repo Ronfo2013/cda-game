@@ -1,37 +1,44 @@
 ========================================
-i 100 GIORNI - THE GAME v2.0
-INSTALLAZIONE CON CLASSIFICA CONDIVISA
+i 100 GIORNI - THE GAME v2.1
+INSTALLAZIONE SU IONOS
 ========================================
 
-✅ NOVITÀ ATTIVE:
-- Tutorial compatto (3 step)
-- Swipe + D-Pad opzionale
+✅ FUNZIONALITÀ:
+- Controlli solo swipe (touch)
 - Classifica GLOBALE condivisa tra partecipanti
-- Nessun database MySQL (usa file JSON)
+- Pannello ADMIN per personalizzare evento, colori, immagini
+- Supporto immagini personalizzate per personaggi
+- Database MySQL opzionale (con fallback file JSON)
 
 ========================================
 REQUISITI
 ========================================
 
-- Hosting con PHP (IONOS consigliato)
-- Nessun database richiesto
-- PHP 7.4+ consigliato
+- Hosting IONOS con PHP 7.4+
+- MySQL (opzionale, per immagini personalizzate)
+- Dominio/sottodominio configurato
 
 ========================================
 STRUTTURA FILE DA CARICARE
 ========================================
 
 /tuodominio/
-├── index.html
+├── index.html              (gioco principale)
+├── admin.html              (pannello admin)
 ├── favicon.svg
-├── .htaccess
+├── db.sql                  (schema database - opzionale)
 ├── api/
-│   └── leaderboard.php
+│   ├── config.php          (API configurazione)
+│   ├── db_config.php       (credenziali DB - MODIFICA!)
+│   ├── images.php          (API upload immagini)
+│   └── leaderboard.php     (API classifica)
 ├── css/
 │   └── style.css
 ├── data/
 │   ├── .htaccess
 │   └── leaderboard.json
+├── upload/                 (cartella immagini - vuota)
+│   └── .htaccess
 └── js/
     ├── config.js
     ├── audio.js
@@ -40,42 +47,100 @@ STRUTTURA FILE DA CARICARE
     └── main.js
 
 ========================================
-INSTALLAZIONE IONOS (PASSO-PASSO)
+INSTALLAZIONE BASE (SENZA DATABASE)
 ========================================
 
 1) Apri IONOS > Hosting > Gestisci > File Manager
-2) Entra nella root pubblica del dominio (`htdocs` o `public_html`)
+2) Entra nella root pubblica (`/` o `htdocs`)
 3) Carica TUTTI i file/cartelle sopra
-4) Verifica i permessi della cartella `data`:
-   - cartella `data`: 755 o 775
-   - file `data/leaderboard.json`: 664 o 666
+4) Imposta permessi:
+   - cartella `data/`: 755
+   - file `data/leaderboard.json`: 664
+   - cartella `upload/`: 755
 5) Apri: https://tuodominio.it/
+6) Admin: https://tuodominio.it/admin.html
+
+Senza database, le configurazioni usano localStorage
+e le immagini NON vengono salvate sul server.
 
 ========================================
-TEST RAPIDO CLASSIFICA CONDIVISA
+INSTALLAZIONE CON DATABASE MYSQL
 ========================================
 
-1) Apri il gioco da un primo telefono/browser e salva un punteggio
-2) Apri lo stesso dominio da un secondo telefono/browser
-3) Vai in CLASSIFICA: devi vedere lo stesso punteggio
+1) Crea database MySQL da IONOS:
+   IONOS > Database > Crea database MySQL
+   Annota: host, nome_db, utente, password
 
-Se non lo vedi:
-- controlla `api/leaderboard.php`
-- controlla permessi `data/`
-- controlla errori PHP nel pannello hosting
+2) Importa db.sql:
+   IONOS > Database > phpMyAdmin > Importa > db.sql
 
-========================================
-RESET CLASSIFICA GLOBALE
-========================================
+3) Modifica api/db_config.php con le tue credenziali:
+   
+   define('DB_HOST', 'db12345.hosting.ionos.it');
+   define('DB_NAME', 'dbs12345');
+   define('DB_USER', 'dbu12345');
+   define('DB_PASS', 'la_tua_password');
+   
+   define('ADMIN_PASSWORD', 'cambia_questa_password');
 
-Apri `data/leaderboard.json` e lascia solo:
-[]
+4) Carica tutti i file su IONOS
 
-========================================
-NOTE
-========================================
-
-- Se API non è raggiungibile, il gioco usa fallback locale temporaneo.
-- Per uso evento reale, verifica sempre che l'API server sia attiva.
+5) Verifica che upload/ abbia permessi 755
 
 ========================================
+PANNELLO ADMIN
+========================================
+
+URL: https://tuodominio.it/admin.html
+Password default: admin123 (CAMBIALA in db_config.php!)
+
+Funzioni:
+- Modifica titolo, data, location evento
+- Cambia colori tema
+- Cambia emoji/immagini personaggi
+- Visualizza e svuota classifica
+
+========================================
+TEST RAPIDO
+========================================
+
+1) Apri https://tuodominio.it/api/config.php
+   Deve mostrare JSON con "success": true
+
+2) Apri https://tuodominio.it/api/leaderboard.php
+   Deve mostrare JSON con "success": true
+
+3) Gioca e salva punteggio, verifica in classifica
+
+4) Apri admin.html e modifica configurazione
+
+========================================
+TROUBLESHOOTING
+========================================
+
+Errore "Database non configurato":
+→ Le credenziali in db_config.php sono errate
+→ Il database non esiste o non è accessibile
+→ Il gioco funziona comunque con fallback locale
+
+Errore upload immagini:
+→ Verifica permessi cartella upload/ (755)
+→ Verifica che .htaccess sia presente in upload/
+
+Classifica non condivisa:
+→ Verifica che data/leaderboard.json sia scrivibile (664)
+→ Controlla errori PHP nel log IONOS
+
+========================================
+SICUREZZA
+========================================
+
+⚠️ IMPORTANTE: Modifica sempre ADMIN_PASSWORD
+   in api/db_config.php prima di andare online!
+
+I file .htaccess proteggono:
+- data/ → blocca accesso diretto ai JSON
+- upload/ → consente solo immagini, blocca PHP
+
+========================================
+
