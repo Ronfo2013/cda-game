@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="i 100 Giorni - The Game. Celebra la maturità con questo divertente gioco in stile Pac-Man!">
+    <meta name="keywords" content="100 giorni, maturità, gioco, pacman, scuola">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="i 100 Giorni - The Game">
+    <meta property="og:description" content="Celebra la maturità con questo divertente gioco!">
+    <meta property="og:type" content="website">
+    
+    <title>i 100 Giorni - The Game</title>
+    
+    <!-- Preconnect for API -->
+    <link rel="preconnect" href="https://www.icentogiorni.com">
+    
+    <!-- Styles -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css?v=20260210">
+</head>
+<body>
+    <!-- Rotate Warning -->
+    <div id="rotate-warning">
+        <div class="rotate-icon">📱</div>
+        <h2>Ruota il telefono!</h2>
+        <p>Gioca in verticale per un'esperienza migliore</p>
+    </div>
+
+    <!-- Floating decorations -->
+    <div class="floating-emoji" style="top: 10%; left: 10%; animation-delay: 0s;">🍺</div>
+    <div class="floating-emoji" style="top: 20%; right: 15%; animation-delay: 1s;">🍾</div>
+    <div class="floating-emoji" style="bottom: 30%; left: 8%; animation-delay: 2s;">🎓</div>
+    <div class="floating-emoji" style="bottom: 15%; right: 10%; animation-delay: 3s;">📚</div>
+
+    <!-- Title Screen -->
+    <div id="title-screen">
+        <h1>🎓 i 100 Giorni 🎓</h1>
+        <div class="subtitle">— The Game —</div>
+        <div class="event-info">
+            <div class="event-date">📅 Sabato 14 Marzo 2026</div>
+            <div class="event-location">📍 OPIUM - PORDENONE</div>
+        </div>
+        <button class="play-btn" id="start-btn">▶ GIOCA</button>
+        <button class="play-btn secondary leaderboard-home-btn" id="leaderboard-btn">🏆 CLASSIFICA</button>
+        <div class="swipe-hint">
+            <div class="swipe-hand">👆</div>
+            <div class="swipe-instruction">Scorri sullo schermo per muoverti</div>
+        </div>
+        <div class="instructions">
+            <span>🍺</span> Raccogli le bevande<br>
+            <span>👨‍🏫</span> Evita i professori<br>
+            <span>📜</span> Prendi il giustificativo per l'invincibilità!
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container">
+        <div class="event-bg-overlay">
+            <span>i 100 Giorni</span>
+            <span>📅 Sabato 14 Marzo 2026</span>
+            <span>📍 OPIUM - PORDENONE</span>
+        </div>
+        <div id="hud">
+            <div class="hud-item" id="score"><span>🏆</span> <span id="score-value">0</span></div>
+            <div class="hud-item" id="level"><span>📊</span> Lv.<span id="level-value">1</span></div>
+            <div class="hud-item" id="lives"><span>❤️</span> <span id="lives-value">3</span></div>
+        </div>
+        <div id="combo-display">COMBO x<span id="combo-value">0</span></div>
+        <canvas id="gameCanvas"></canvas>
+        <button class="pause-btn" id="pause-btn">⏸️</button>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay">
+        <div class="tutorial-content">
+            <button class="tutorial-skip-btn" id="tutorial-skip-btn">Salta</button>
+            <div class="tutorial-step" data-step="1">
+                <div class="tutorial-emoji">👆</div>
+                <h2>Come muoversi</h2>
+                <p><strong>Scorri il dito</strong> sullo schermo nella direzione in cui vuoi andare.</p>
+                <div class="swipe-demo-animated">
+                    <div class="swipe-demo-finger">👆</div>
+                    <div class="swipe-demo-arrows">
+                        <span class="arrow up">⬆️</span>
+                        <span class="arrow left">⬅️</span>
+                        <span class="arrow right">➡️</span>
+                        <span class="arrow down">⬇️</span>
+                    </div>
+                </div>
+                <p class="swipe-tip">Swipe rapidi e brevi funzionano meglio!</p>
+                <button class="tutorial-btn tutorial-next">Avanti</button>
+            </div>
+            
+            <div class="tutorial-step" data-step="2" style="display: none;">
+                <div class="tutorial-emoji">🎯</div>
+                <h2>Obiettivo</h2>
+                <p><strong>🍺 Birra</strong> = 10 punti</p>
+                <p><strong>🍾 Vodka</strong> = 50 punti</p>
+                <p>Raccogli tutto per passare al livello successivo.</p>
+                <button class="tutorial-btn tutorial-next">Avanti</button>
+            </div>
+            
+            <div class="tutorial-step" data-step="3" style="display: none;">
+                <div class="tutorial-emoji">👨‍🏫</div>
+                <h2>Sopravvivi</h2>
+                <p>Evita i professori: se ti prendono perdi una vita ❤️</p>
+                <p>Prendi il <strong>📜 giustificativo</strong> per diventare invincibile!</p>
+                <button class="tutorial-btn tutorial-start">Inizia a Giocare! 🎮</button>
+            </div>
+            <div class="tutorial-progress" id="tutorial-progress">1 / 3</div>
+        </div>
+    </div>
+
+    <!-- Level Announcement -->
+    <div id="level-announce">
+        <span class="level-num">LIVELLO 1</span>
+        <span class="level-info">👨‍🏫 1 Professore</span>
+    </div>
+
+    <!-- Power-up Indicator -->
+    <div id="powerup-indicator">📜 INVINCIBILE!</div>
+
+    <!-- Pause Overlay -->
+    <div id="pause-overlay">
+        <h2>⏸️ PAUSA</h2>
+        <button class="restart-btn" id="resume-btn">▶️ Riprendi</button>
+        <button class="restart-btn" id="restart-from-pause-btn">🔄 Ricomincia</button>
+        <button class="restart-btn" id="quit-btn">🏠 Menu</button>
+    </div>
+
+    <!-- Game Over / Win Overlay -->
+    <div id="overlay">
+        <h2 id="overlay-title">GAME OVER</h2>
+        <div class="final-score">Punteggio: <span id="final-score">0</span></div>
+        <div class="high-score">Record: <span id="high-score">0</span></div>
+        <button class="restart-btn" id="retry-btn">🔄 Rigioca</button>
+        <button class="restart-btn" id="menu-btn">🏠 Menu</button>
+    </div>
+
+    <!-- Nickname Input Screen -->
+    <div id="nickname-screen">
+        <h2>🏆 Nuovo Punteggio!</h2>
+        <div class="score-display">Punti: <span id="nickname-score">0</span></div>
+        <input type="text" id="nickname-input" placeholder="Il tuo nickname" maxlength="20" autocomplete="off">
+        <button class="nickname-btn" id="submit-score-btn">📝 Salva in Classifica</button>
+        <button class="nickname-btn secondary" id="skip-leaderboard-btn">⏭️ Salta</button>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen">
+        <h2>🏆 CLASSIFICA</h2>
+        <div class="your-position" id="your-position"></div>
+        <div class="leaderboard-list" id="leaderboard-list">
+            <!-- Populated dynamically -->
+        </div>
+        <div class="leaderboard-buttons">
+            <button class="restart-btn" id="play-from-leaderboard-btn">🎮 Gioca</button>
+            <button class="restart-btn" id="close-leaderboard-btn">🏠 Menu</button>
+        </div>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js?v=20260210"></script>
+    <script src="js/audio.js?v=20260210"></script>
+    <script src="js/leaderboard.js?v=20260210"></script>
+    <script src="js/game.js?v=20260210"></script>
+    <script src="js/main.js?v=20260210"></script>
+</body>
+</html>

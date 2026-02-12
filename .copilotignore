@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+vendor/
+target/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+__pycache__/
+*.pyc
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Cargo.lock
+
+# Large/binary files
+*.min.js
+*.min.css
+*.map
+*.chunk.js
+*.woff*
+*.ttf
+*.png
+*.jpg
+*.gif
+*.ico
+*.mp4
+*.pdf
+
+# Logs & cache
+*.log
+.cache/
+coverage/
+.nyc_output/
+
+# Env & secrets
+.env*
+*.sqlite
+*.db

@@ -1,0 +1,81 @@
+========================================
+i 100 GIORNI - THE GAME v2.0
+INSTALLAZIONE CON CLASSIFICA CONDIVISA
+========================================
+
+✅ NOVITÀ ATTIVE:
+- Tutorial compatto (3 step)
+- Swipe + D-Pad opzionale
+- Classifica GLOBALE condivisa tra partecipanti
+- Nessun database MySQL (usa file JSON)
+
+========================================
+REQUISITI
+========================================
+
+- Hosting con PHP (IONOS consigliato)
+- Nessun database richiesto
+- PHP 7.4+ consigliato
+
+========================================
+STRUTTURA FILE DA CARICARE
+========================================
+
+/tuodominio/
+├── index.html
+├── favicon.svg
+├── .htaccess
+├── api/
+│   └── leaderboard.php
+├── css/
+│   └── style.css
+├── data/
+│   ├── .htaccess
+│   └── leaderboard.json
+└── js/
+    ├── config.js
+    ├── audio.js
+    ├── leaderboard.js
+    ├── game.js
+    └── main.js
+
+========================================
+INSTALLAZIONE IONOS (PASSO-PASSO)
+========================================
+
+1) Apri IONOS > Hosting > Gestisci > File Manager
+2) Entra nella root pubblica del dominio (`htdocs` o `public_html`)
+3) Carica TUTTI i file/cartelle sopra
+4) Verifica i permessi della cartella `data`:
+   - cartella `data`: 755 o 775
+   - file `data/leaderboard.json`: 664 o 666
+5) Apri: https://tuodominio.it/
+
+========================================
+TEST RAPIDO CLASSIFICA CONDIVISA
+========================================
+
+1) Apri il gioco da un primo telefono/browser e salva un punteggio
+2) Apri lo stesso dominio da un secondo telefono/browser
+3) Vai in CLASSIFICA: devi vedere lo stesso punteggio
+
+Se non lo vedi:
+- controlla `api/leaderboard.php`
+- controlla permessi `data/`
+- controlla errori PHP nel pannello hosting
+
+========================================
+RESET CLASSIFICA GLOBALE
+========================================
+
+Apri `data/leaderboard.json` e lascia solo:
+[]
+
+========================================
+NOTE
+========================================
+
+- Se API non è raggiungibile, il gioco usa fallback locale temporaneo.
+- Per uso evento reale, verifica sempre che l'API server sia attiva.
+
+========================================
