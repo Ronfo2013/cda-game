@@ -20,6 +20,7 @@
 ├── css/
 │   └── style.css
 ├── data/
+│   ├── config.json
 │   └── leaderboard.json
 ├── db.sql
 ├── favicon.svg
@@ -50,6 +51,7 @@ graph TD
     100giorni_game --> 100giorni_game_css[📁 css]
     100giorni_game_css --> 100giorni_game_css_style_css[🎨 style.css]
     100giorni_game --> 100giorni_game_data[📁 data]
+    100giorni_game_data --> 100giorni_game_data_config_json[📋 config.json]
     100giorni_game_data --> 100giorni_game_data_leaderboard_json[📋 leaderboard.json]
     100giorni_game --> 100giorni_game_db_sql[📄 db.sql]
 ```

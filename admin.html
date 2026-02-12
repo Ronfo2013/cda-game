@@ -244,6 +244,7 @@
             <button class="tab active" data-tab="evento">📅 Evento</button>
             <button class="tab" data-tab="colori">🎨 Colori</button>
             <button class="tab" data-tab="personaggi">😀 Personaggi</button>
+            <button class="tab" data-tab="icone">✨ Icone UI</button>
             <button class="tab" data-tab="leaderboard">🏆 Classifica</button>
         </div>
 
@@ -418,6 +419,52 @@
                         <button class="clear-image-btn" onclick="clearImage('scared')" style="display:none" id="clear-scared">🗑️</button>
                         <input type="file" id="file-scared" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'scared')">
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB ICONE UI -->
+        <div class="tab-content" id="tab-icone">
+            <h2>✨ Icone Interfaccia</h2>
+            <p style="opacity: 0.7; margin-bottom: 20px;">Personalizza le emoji/icone mostrate nelle schermate del gioco.</p>
+            
+            <h3 style="color: var(--color-cyan); margin-top: 20px;">Schermata Titolo</h3>
+            <div class="emoji-grid">
+                <div class="form-group">
+                    <label>Icona Titolo</label>
+                    <input type="text" id="ui-icon-title" value="🎓" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Data</label>
+                    <input type="text" id="ui-icon-date" value="📅" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Location</label>
+                    <input type="text" id="ui-icon-location" value="📍" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Classifica</label>
+                    <input type="text" id="ui-icon-leaderboard" value="🏆" maxlength="4">
+                </div>
+            </div>
+            
+            <h3 style="color: var(--color-cyan); margin-top: 20px;">HUD In-Game</h3>
+            <div class="emoji-grid">
+                <div class="form-group">
+                    <label>Icona Punteggio</label>
+                    <input type="text" id="ui-icon-score" value="🏆" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Livello</label>
+                    <input type="text" id="ui-icon-level" value="📊" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Vite</label>
+                    <input type="text" id="ui-icon-lives" value="❤️" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Icona Swipe</label>
+                    <input type="text" id="ui-icon-swipe" value="👆" maxlength="4">
                 </div>
             </div>
         </div>
@@ -660,6 +707,17 @@
                     });
                 }
             }
+            // Load UI icons
+            if (config.uiIcons) {
+                document.getElementById('ui-icon-title').value = config.uiIcons.title || '🎓';
+                document.getElementById('ui-icon-date').value = config.uiIcons.date || '📅';
+                document.getElementById('ui-icon-location').value = config.uiIcons.location || '📍';
+                document.getElementById('ui-icon-leaderboard').value = config.uiIcons.leaderboard || '🏆';
+                document.getElementById('ui-icon-score').value = config.uiIcons.score || '🏆';
+                document.getElementById('ui-icon-level').value = config.uiIcons.level || '📊';
+                document.getElementById('ui-icon-lives').value = config.uiIcons.lives || '❤️';
+                document.getElementById('ui-icon-swipe').value = config.uiIcons.swipe || '👆';
+            }
             updatePreview();
         }
 
@@ -689,6 +747,16 @@
                         document.getElementById('enemy-3').value,
                         document.getElementById('enemy-4').value
                     ]
+                },
+                uiIcons: {
+                    title: document.getElementById('ui-icon-title').value,
+                    date: document.getElementById('ui-icon-date').value,
+                    location: document.getElementById('ui-icon-location').value,
+                    leaderboard: document.getElementById('ui-icon-leaderboard').value,
+                    score: document.getElementById('ui-icon-score').value,
+                    level: document.getElementById('ui-icon-level').value,
+                    lives: document.getElementById('ui-icon-lives').value,
+                    swipe: document.getElementById('ui-icon-swipe').value
                 }
             };
         }

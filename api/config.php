@@ -33,8 +33,23 @@ function validateAdminPassword(): bool {
 // GET - Ottieni configurazione completa
 // ============================================
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Prova prima file JSON (fallback)
+    $configFile = dirname(__DIR__) . '/data/config.json';
+    
     // Controlla se il DB è configurato
     if (!isDatabaseConfigured()) {
+        // Prova a leggere da file JSON
+        if (file_exists($configFile)) {
+            $jsonConfig = json_decode(file_get_contents($configFile), true);
+            if (is_array($jsonConfig)) {
+                respond([
+                    'success' => true,
+                    'config' => $jsonConfig,
+                    'source' => 'json_file'
+                ]);
+            }
+        }
+        
         // Ritorna configurazione di default
         respond([
             'success' => true,
@@ -58,6 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     'powerup' => '📜',
                     'scared' => '😰',
                     'enemies' => ['👨‍🏫', '👩‍🏫', '🧑‍🏫', '👴', '👨‍🔬', '👩‍💼']
+                ],
+                'uiIcons' => [
+                    'title' => '🎓',
+                    'date' => '📅',
+                    'location' => '📍',
+                    'leaderboard' => '🏆',
+                    'score' => '🏆',
+                    'level' => '📊',
+                    'lives' => '❤️',
+                    'swipe' => '👆'
                 ],
                 'images' => []
             ],
@@ -128,14 +153,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respond(['success' => false, 'error' => 'Password admin non valida'], 403);
     }
     
-    // Controlla se il DB è configurato
-    if (!isDatabaseConfigured()) {
-        respond(['success' => false, 'error' => 'Database non configurato. Esegui db.sql prima.'], 500);
-    }
-    
     $input = json_decode(file_get_contents('php://input'), true);
     if (!is_array($input)) {
         respond(['success' => false, 'error' => 'Payload non valido'], 400);
+    }
+    
+    // Controlla se il DB è configurato
+    if (!isDatabaseConfigured()) {
+        // Salva su file JSON come fallback
+        $configFile = dirname(__DIR__) . '/data/config.json';
+        $dataDir = dirname($configFile);
+        
+        if (!is_dir($dataDir)) {
+            @mkdir($dataDir, 0775, true);
+        }
+        
+        // Leggi config esistente e merge
+        $existingConfig = [];
+        if (file_exists($configFile)) {
+            $existingConfig = json_decode(file_get_contents($configFile), true) ?? [];
+        }
+        
+        // Merge nuova configurazione
+        $config = array_merge($existingConfig, [
+            'event' => $input['event'] ?? $existingConfig['event'] ?? [],
+            'colors' => $input['colors'] ?? $existingConfig['colors'] ?? [],
+            'emojis' => $input['emojis'] ?? $existingConfig['emojis'] ?? []
+        ]);
+        
+        // Mantieni immagini esistenti
+        if (isset($existingConfig['images'])) {
+            $config['images'] = $existingConfig['images'];
+        }
+        
+        $result = file_put_contents($configFile, json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
+        
+        if ($result === false) {
+            respond(['success' => false, 'error' => 'Impossibile scrivere config.json. Verifica permessi data/'], 500);
+        }
+        
+        respond([
+            'success' => true,
+            'message' => 'Configurazione salvata (file JSON)',
+            'source' => 'json_file'
+        ]);
     }
     
     $pdo = getDB();

@@ -85,22 +85,22 @@
 
     <!-- Title Screen -->
     <div id="title-screen">
-        <h1 id="game-title">🎓 i 100 Giorni 🎓</h1>
+        <h1 id="game-title"><span id="icon-title-left">🎓</span> i 100 Giorni <span id="icon-title-right">🎓</span></h1>
         <div class="subtitle">— The Game —</div>
         <div class="event-info">
-            <div class="event-date" id="event-date-display">📅 Sabato 14 Marzo 2026</div>
-            <div class="event-location" id="event-location-display">📍 OPIUM - PORDENONE</div>
+            <div class="event-date" id="event-date-display"><span id="icon-date">📅</span> Sabato 14 Marzo 2026</div>
+            <div class="event-location" id="event-location-display"><span id="icon-location">📍</span> OPIUM - PORDENONE</div>
         </div>
         <button class="play-btn" id="start-btn">▶ GIOCA</button>
-        <button class="play-btn secondary leaderboard-home-btn" id="leaderboard-btn">🏆 CLASSIFICA</button>
+        <button class="play-btn secondary leaderboard-home-btn" id="leaderboard-btn"><span id="icon-leaderboard">🏆</span> CLASSIFICA</button>
         <div class="swipe-hint">
-            <div class="swipe-hand">👆</div>
+            <div class="swipe-hand"><span id="icon-swipe">👆</span></div>
             <div class="swipe-instruction">Scorri sullo schermo per muoverti</div>
         </div>
         <div class="instructions">
-            <span>🍺</span> Raccogli le bevande<br>
-            <span>👨‍🏫</span> Evita i professori<br>
-            <span>📜</span> Prendi il giustificativo per l'invincibilità!
+            <span id="icon-inst-beer">🍺</span> Raccogli le bevande<br>
+            <span id="icon-inst-enemy">👨‍🏫</span> Evita i professori<br>
+            <span id="icon-inst-powerup">📜</span> Prendi il giustificativo per l'invincibilità!
         </div>
     </div>
 
@@ -112,9 +112,9 @@
             <span>📍 OPIUM - PORDENONE</span>
         </div>
         <div id="hud">
-            <div class="hud-item" id="score"><span>🏆</span> <span id="score-value">0</span></div>
-            <div class="hud-item" id="level"><span>📊</span> Lv.<span id="level-value">1</span></div>
-            <div class="hud-item" id="lives"><span>❤️</span> <span id="lives-value">3</span></div>
+            <div class="hud-item" id="score"><span id="icon-hud-score">🏆</span> <span id="score-value">0</span></div>
+            <div class="hud-item" id="level"><span id="icon-hud-level">📊</span> Lv.<span id="level-value">1</span></div>
+            <div class="hud-item" id="lives"><span id="icon-hud-lives">❤️</span> <span id="lives-value">3</span></div>
         </div>
         <div id="combo-display">COMBO x<span id="combo-value">0</span></div>
         <canvas id="gameCanvas"></canvas>
@@ -169,7 +169,7 @@
     </div>
 
     <!-- Power-up Indicator -->
-    <div id="powerup-indicator">📜 INVINCIBILE!</div>
+    <div id="powerup-indicator"><span id="icon-powerup-active">📜</span> INVINCIBILE!</div>
 
     <!-- Pause Overlay -->
     <div id="pause-overlay">

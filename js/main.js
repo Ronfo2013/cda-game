@@ -13,7 +13,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupEventListeners();
     checkTutorial();
+    
+    // Applica icone UI dopo che config è caricato
+    setTimeout(applyUIIcons, 100);
 });
+
+// Applica icone UI dalla configurazione admin
+function applyUIIcons() {
+    if (!ADMIN_CONFIG || !ADMIN_CONFIG.uiIcons) return;
+    
+    const icons = ADMIN_CONFIG.uiIcons;
+    
+    // Schermata titolo
+    const setIcon = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value) el.textContent = value;
+    };
+    
+    setIcon('icon-title-left', icons.title);
+    setIcon('icon-title-right', icons.title);
+    setIcon('icon-date', icons.date);
+    setIcon('icon-location', icons.location);
+    setIcon('icon-leaderboard', icons.leaderboard);
+    setIcon('icon-swipe', icons.swipe);
+    
+    // HUD in-game
+    setIcon('icon-hud-score', icons.score);
+    setIcon('icon-hud-level', icons.level);
+    setIcon('icon-hud-lives', icons.lives);
+    
+    // Istruzioni (usa emoji dai personaggi se disponibili)
+    if (ADMIN_CONFIG.emojis) {
+        setIcon('icon-inst-beer', ADMIN_CONFIG.emojis.beer);
+        setIcon('icon-inst-enemy', ADMIN_CONFIG.emojis.enemies?.[0]);
+        setIcon('icon-inst-powerup', ADMIN_CONFIG.emojis.powerup);
+        setIcon('icon-powerup-active', ADMIN_CONFIG.emojis.powerup);
+    }
+}
 
 function applyControlMode() {
     // Solo swipe mode - funzione mantenuta per compatibilità
