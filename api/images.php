@@ -18,6 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/db_config.php';
 
+// Percorsi
+define('IMAGES_JSON', __DIR__ . '/../data/images.json');
+
 // ============================================
 // FUNZIONI HELPER
 // ============================================
@@ -35,8 +38,24 @@ function validateAdminPassword(): bool {
 
 function validateImageKey(string $key): bool {
     $validKeys = ['player', 'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6', 
-                  'beer', 'vodka', 'powerup', 'scared'];
+                  'beer', 'vodka', 'powerup', 'scared', 'logo'];
     return in_array($key, $validKeys, true);
+}
+
+function loadImagesData(): array {
+    if (!file_exists(IMAGES_JSON)) {
+        return [];
+    }
+    $json = file_get_contents(IMAGES_JSON);
+    return json_decode($json, true) ?: [];
+}
+
+function saveImagesData(array $data): bool {
+    $dir = dirname(IMAGES_JSON);
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    return file_put_contents(IMAGES_JSON, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) !== false;
 }
 
 function generateFilename(string $key, string $extension): string {
@@ -48,18 +67,17 @@ function getExtensionFromMime(string $mime): string {
         'image/png' => 'png',
         'image/jpeg' => 'jpg',
         'image/gif' => 'gif',
-        'image/webp' => 'webp'
+        'image/webp' => 'webp',
+        'image/svg+xml' => 'svg'
     ];
     return $map[$mime] ?? 'png';
 }
 
-function deleteOldImage(PDO $pdo, string $imageKey): void {
-    $stmt = $pdo->prepare("SELECT filename FROM game_images WHERE image_key = ?");
-    $stmt->execute([$imageKey]);
-    $old = $stmt->fetch();
+function deleteOldImage(string $imageKey): void {
+    $imagesData = loadImagesData();
     
-    if ($old && !empty($old['filename'])) {
-        $oldPath = UPLOAD_DIR . $old['filename'];
+    if (isset($imagesData[$imageKey]) && !empty($imagesData[$imageKey]['filename'])) {
+        $oldPath = UPLOAD_DIR . $imagesData[$imageKey]['filename'];
         if (file_exists($oldPath)) {
             @unlink($oldPath);
         }
@@ -70,29 +88,23 @@ function deleteOldImage(PDO $pdo, string $imageKey): void {
 // GET - Ottieni tutte le immagini
 // ============================================
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Controlla se il DB è configurato
-    if (!isDatabaseConfigured()) {
-        // Fallback: ritorna lista vuota
-        respond([
-            'success' => true,
-            'images' => [],
-            'source' => 'fallback'
-        ]);
-    }
+    $imagesData = loadImagesData();
+    $images = [];
     
-    $pdo = getDB();
-    $stmt = $pdo->query("SELECT image_key, filename, original_name, uploaded_at FROM game_images ORDER BY image_key");
-    $images = $stmt->fetchAll();
-    
-    // Aggiungi URL completo
-    foreach ($images as &$img) {
-        $img['url'] = UPLOAD_URL . $img['filename'];
+    foreach ($imagesData as $key => $data) {
+        $images[] = [
+            'image_key' => $key,
+            'filename' => $data['filename'],
+            'original_name' => $data['original_name'] ?? '',
+            'url' => UPLOAD_URL . $data['filename'],
+            'uploaded_at' => $data['uploaded_at'] ?? ''
+        ];
     }
     
     respond([
         'success' => true,
         'images' => $images,
-        'source' => 'database'
+        'source' => 'json'
     ]);
 }
 
@@ -103,11 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verifica password admin
     if (!validateAdminPassword()) {
         respond(['success' => false, 'error' => 'Password admin non valida'], 403);
-    }
-    
-    // Controlla se il DB è configurato
-    if (!isDatabaseConfigured()) {
-        respond(['success' => false, 'error' => 'Database non configurato. Esegui db.sql prima.'], 500);
     }
     
     // Verifica che ci sia un file
@@ -142,17 +149,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respond(['success' => false, 'error' => 'Tipo file non consentito. Usa PNG, JPG, GIF o WebP'], 400);
     }
     
-    // Verifica dimensioni immagine
-    $imageInfo = @getimagesize($file['tmp_name']);
-    if ($imageInfo === false) {
-        respond(['success' => false, 'error' => 'File non è un\'immagine valida'], 400);
-    }
-    
-    $width = $imageInfo[0];
-    $height = $imageInfo[1];
-    
-    if ($width > IMAGE_MAX_WIDTH || $height > IMAGE_MAX_HEIGHT) {
-        respond(['success' => false, 'error' => "Immagine troppo grande. Max {$width}x{$height}px"], 400);
+    // Verifica dimensioni immagine (skip per SVG)
+    if ($mimeType !== 'image/svg+xml') {
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            respond(['success' => false, 'error' => 'File non è un\'immagine valida'], 400);
+        }
+        
+        $width = $imageInfo[0];
+        $height = $imageInfo[1];
+        
+        if ($width > IMAGE_MAX_WIDTH || $height > IMAGE_MAX_HEIGHT) {
+            respond(['success' => false, 'error' => "Immagine troppo grande. Max " . IMAGE_MAX_WIDTH . "x" . IMAGE_MAX_HEIGHT . "px"], 400);
+        }
+    } else {
+        $width = 0;
+        $height = 0;
     }
     
     // Genera nome file univoco
@@ -165,40 +177,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mkdir(UPLOAD_DIR, 0755, true);
     }
     
+    // Elimina vecchia immagine se esiste
+    deleteOldImage($imageKey);
+    
     // Sposta file
     if (!move_uploaded_file($file['tmp_name'], $filepath)) {
         respond(['success' => false, 'error' => 'Impossibile salvare il file'], 500);
     }
     
-    // Salva nel database
-    $pdo = getDB();
+    // Salva metadati nel JSON
+    $imagesData = loadImagesData();
+    $imagesData[$imageKey] = [
+        'filename' => $filename,
+        'original_name' => $file['name'],
+        'mime_type' => $mimeType,
+        'file_size' => $file['size'],
+        'width' => $width,
+        'height' => $height,
+        'uploaded_at' => date('Y-m-d H:i:s')
+    ];
     
-    // Elimina vecchia immagine se esiste
-    deleteOldImage($pdo, $imageKey);
-    
-    // Inserisci o aggiorna
-    $stmt = $pdo->prepare("
-        INSERT INTO game_images (image_key, filename, original_name, mime_type, file_size, width, height)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE 
-            filename = VALUES(filename),
-            original_name = VALUES(original_name),
-            mime_type = VALUES(mime_type),
-            file_size = VALUES(file_size),
-            width = VALUES(width),
-            height = VALUES(height),
-            uploaded_at = CURRENT_TIMESTAMP
-    ");
-    
-    $stmt->execute([
-        $imageKey,
-        $filename,
-        $file['name'],
-        $mimeType,
-        $file['size'],
-        $width,
-        $height
-    ]);
+    if (!saveImagesData($imagesData)) {
+        respond(['success' => false, 'error' => 'Impossibile salvare metadati'], 500);
+    }
     
     respond([
         'success' => true,
@@ -222,11 +223,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         respond(['success' => false, 'error' => 'Password admin non valida'], 403);
     }
     
-    // Controlla se il DB è configurato
-    if (!isDatabaseConfigured()) {
-        respond(['success' => false, 'error' => 'Database non configurato'], 500);
-    }
-    
     // Leggi body
     $input = json_decode(file_get_contents('php://input'), true);
     $imageKey = $input['key'] ?? '';
@@ -235,13 +231,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         respond(['success' => false, 'error' => 'Chiave immagine non valida'], 400);
     }
     
-    $pdo = getDB();
+    // Elimina file fisico
+    deleteOldImage($imageKey);
     
-    // Elimina file e record
-    deleteOldImage($pdo, $imageKey);
-    
-    $stmt = $pdo->prepare("DELETE FROM game_images WHERE image_key = ?");
-    $stmt->execute([$imageKey]);
+    // Rimuovi dal JSON
+    $imagesData = loadImagesData();
+    unset($imagesData[$imageKey]);
+    saveImagesData($imagesData);
     
     respond([
         'success' => true,

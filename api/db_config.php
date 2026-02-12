@@ -17,7 +17,7 @@ define('UPLOAD_URL', 'upload/');
 
 // Limiti upload
 define('MAX_FILE_SIZE', 100 * 1024); // 100KB
-define('ALLOWED_TYPES', ['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
+define('ALLOWED_TYPES', ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml']);
 define('IMAGE_MAX_WIDTH', 256);
 define('IMAGE_MAX_HEIGHT', 256);
 
