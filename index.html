@@ -41,6 +41,8 @@
                 }
                 // Applica testi evento dopo il DOM load
                 window._adminEventConfig = config.event;
+                // Salva logo
+                window._adminEventLogo = config.event?.logo;
             } catch (e) {}
         })();
         // Applica testi evento quando DOM è pronto
@@ -66,6 +68,17 @@
                 if (locEl) locEl.textContent = '📍 ' + cfg.location;
                 if (bgLoc) bgLoc.textContent = '📍 ' + cfg.location;
             }
+            
+            // Applica logo se presente
+            const logo = window._adminEventLogo;
+            if (logo) {
+                const logoContainer = document.getElementById('event-logo-container');
+                const logoImg = document.getElementById('event-logo');
+                if (logoContainer && logoImg) {
+                    logoImg.src = logo;
+                    logoContainer.style.display = 'block';
+                }
+            }
         });
     </script>
 </head>
@@ -85,6 +98,9 @@
 
     <!-- Title Screen -->
     <div id="title-screen">
+        <div id="event-logo-container" style="display: none;">
+            <img id="event-logo" src="" alt="Logo Evento">
+        </div>
         <h1 id="game-title"><span id="icon-title-left">🎓</span> i 100 Giorni <span id="icon-title-right">🎓</span></h1>
         <div class="subtitle">— The Game —</div>
         <div class="event-info">

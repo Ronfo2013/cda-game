@@ -62,6 +62,39 @@ body {
     background: var(--color-bg);
 }
 
+#event-logo-container {
+    margin-bottom: 20px;
+    animation: fadeInScale 0.8s ease-out;
+}
+
+#event-logo {
+    max-width: min(150px, 40vw);
+    max-height: min(150px, 40vw);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+    animation: glow-logo 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-logo {
+    from { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); }
+    to { filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); }
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Media query per schermi più piccoli */
+@media (max-width: 480px) {
+    #event-logo {
+        max-width: min(120px, 35vw);
+        max-height: min(120px, 35vw);
+    }
+}
+
 #title-screen h1 {
     font-size: clamp(2rem, 8vw, 4rem);
     color: #fff;

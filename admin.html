@@ -264,6 +264,18 @@
                 <input type="text" id="event-location" value="OPIUM - PORDENONE" placeholder="OPIUM - PORDENONE">
             </div>
             
+            <h2>🖼️ Logo Evento</h2>
+            <div class="size-hint">💡 <strong>Suggerimento:</strong> Usa un'immagine PNG o SVG trasparente. Dimensione ideale: 200x200px, max 100KB</div>
+            <div class="form-group">
+                <label>Logo (facoltativo)</label>
+                <div class="image-upload-box" id="upload-logo" onclick="triggerUpload('logo')">
+                    <div class="image-upload-placeholder" id="placeholder-logo">📷 Clicca per caricare</div>
+                    <img class="image-preview" id="preview-logo" style="display:none; width: 120px; height: 120px;">
+                </div>
+                <button class="clear-image-btn" onclick="clearImage('logo')" style="display:none" id="clear-logo">🗑️ Rimuovi Logo</button>
+                <input type="file" id="file-logo" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'logo')">
+            </div>
+            
             <div class="preview" id="event-preview">
                 <div class="preview-title" id="preview-title">🎓 i 100 Giorni 🎓</div>
                 <div style="color: var(--color-gold);" id="preview-date">📅 Sabato 14 Marzo 2026</div>
@@ -673,6 +685,10 @@
                 document.getElementById('event-title').value = config.event.title || '';
                 document.getElementById('event-date').value = config.event.date || '';
                 document.getElementById('event-location').value = config.event.location || '';
+                // Carica logo se presente
+                if (config.event.logo) {
+                    loadImagePreview('logo', config.event.logo);
+                }
             }
             if (config.colors) {
                 document.getElementById('color-gold').value = config.colors.gold || '#ffd700';
@@ -701,6 +717,7 @@
                 if (config.images.vodka) loadImagePreview('vodka', config.images.vodka);
                 if (config.images.powerup) loadImagePreview('powerup', config.images.powerup);
                 if (config.images.scared) loadImagePreview('scared', config.images.scared);
+                if (config.images.logo) loadImagePreview('logo', config.images.logo);
                 if (config.images.enemies) {
                     config.images.enemies.forEach((url, i) => {
                         if (url) loadImagePreview('enemy' + (i + 1), url);
@@ -722,7 +739,7 @@
         }
 
         function getConfig() {
-            return {
+            const config = {
                 event: {
                     title: document.getElementById('event-title').value,
                     date: document.getElementById('event-date').value,
@@ -759,6 +776,13 @@
                     swipe: document.getElementById('ui-icon-swipe').value
                 }
             };
+            
+            // Aggiungi logo se presente
+            if (uploadedImages.logo) {
+                config.event.logo = uploadedImages.logo;
+            }
+            
+            return config;
         }
 
         async function saveConfig() {
