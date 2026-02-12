@@ -561,50 +561,63 @@ const Game = {
                     this.ctx.strokeRect(px + 2, py + 2, this.tileSize - 4, this.tileSize - 4);
                     
                 } else if (tile === CONFIG.TILE_BEER) {
-                    this.ctx.font = `${this.tileSize * 0.85}px Arial`;
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(CONFIG.EMOJI_BEER, px + this.tileSize/2, py + this.tileSize/2);
+                    this.drawSpriteOrEmoji(GAME_IMAGES.beer, CONFIG.EMOJI_BEER, px, py, 0.85);
                     
                 } else if (tile === CONFIG.TILE_VODKA) {
-                    this.ctx.font = `${this.tileSize * 0.95}px Arial`;
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(CONFIG.EMOJI_VODKA, px + this.tileSize/2, py + this.tileSize/2);
+                    this.drawSpriteOrEmoji(GAME_IMAGES.vodka, CONFIG.EMOJI_VODKA, px, py, 0.95);
                     
                 } else if (tile === CONFIG.TILE_POWERUP) {
-                    this.ctx.font = `${this.tileSize * 1.1}px Arial`;
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(CONFIG.EMOJI_POWERUP, px + this.tileSize/2, py + this.tileSize/2);
+                    this.drawSpriteOrEmoji(GAME_IMAGES.powerup, CONFIG.EMOJI_POWERUP, px, py, 1.1);
                 }
             }
         }
     },
     
-    drawPlayer() {
-        const playerPx = this.player.x * this.tileSize + this.tileSize/2;
-        const playerPy = this.player.y * this.tileSize + this.tileSize/2;
+    // Helper per disegnare sprite o emoji
+    drawSpriteOrEmoji(image, emoji, px, py, scale = 1) {
+        const size = this.tileSize * scale;
+        const offsetX = (this.tileSize - size) / 2;
+        const offsetY = (this.tileSize - size) / 2;
         
-        this.ctx.font = `${this.tileSize * 1.3}px Arial`;
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
+        if (image) {
+            this.ctx.drawImage(image, px + offsetX, py + offsetY, size, size);
+        } else {
+            this.ctx.font = `${size}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(emoji, px + this.tileSize/2, py + this.tileSize/2);
+        }
+    },
+    
+    drawPlayer() {
+        const playerPx = this.player.x * this.tileSize;
+        const playerPy = this.player.y * this.tileSize;
+        const size = this.tileSize * 1.3;
+        const offset = (this.tileSize - size) / 2;
         
         if (this.powerUpActive) {
             this.ctx.shadowColor = '#ffd700';
             this.ctx.shadowBlur = 20;
         }
         
-        this.ctx.fillText(CONFIG.EMOJI_PLAYER, playerPx, playerPy);
+        if (GAME_IMAGES.player) {
+            this.ctx.drawImage(GAME_IMAGES.player, playerPx + offset, playerPy + offset, size, size);
+        } else {
+            this.ctx.font = `${size}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(CONFIG.EMOJI_PLAYER, playerPx + this.tileSize/2, playerPy + this.tileSize/2);
+        }
+        
         this.ctx.shadowBlur = 0;
     },
     
     drawEnemies() {
-        this.enemies.forEach(enemy => {
-            const enemyPx = enemy.x * this.tileSize + this.tileSize/2;
-            const enemyPy = enemy.y * this.tileSize + this.tileSize/2;
-            
-            this.ctx.font = `${this.tileSize * 1.25}px Arial`;
+        this.enemies.forEach((enemy, index) => {
+            const enemyPx = enemy.x * this.tileSize;
+            const enemyPy = enemy.y * this.tileSize;
+            const size = this.tileSize * 1.25;
+            const offset = (this.tileSize - size) / 2;
             
             if (this.gracePeriod > 0 && Math.floor(this.gracePeriod / 10) % 2 === 0) {
                 this.ctx.globalAlpha = 0.3;
@@ -614,13 +627,32 @@ const Game = {
                 this.ctx.globalAlpha = 0.6;
                 this.ctx.shadowColor = '#00ff00';
                 this.ctx.shadowBlur = 10;
-                this.ctx.fillText(CONFIG.EMOJI_SCARED_ENEMY, enemyPx, enemyPy);
+                
+                if (GAME_IMAGES.scared) {
+                    this.ctx.drawImage(GAME_IMAGES.scared, enemyPx + offset, enemyPy + offset, size, size);
+                } else {
+                    this.ctx.font = `${size}px Arial`;
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(CONFIG.EMOJI_SCARED_ENEMY, enemyPx + this.tileSize/2, enemyPy + this.tileSize/2);
+                }
+                
                 this.ctx.shadowBlur = 0;
                 this.ctx.globalAlpha = 1;
             } else {
                 this.ctx.shadowColor = '#ff0000';
                 this.ctx.shadowBlur = 8;
-                this.ctx.fillText(enemy.type.emoji, enemyPx, enemyPy);
+                
+                const enemyImage = GAME_IMAGES.enemies[index];
+                if (enemyImage) {
+                    this.ctx.drawImage(enemyImage, enemyPx + offset, enemyPy + offset, size, size);
+                } else {
+                    this.ctx.font = `${size}px Arial`;
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(enemy.type.emoji, enemyPx + this.tileSize/2, enemyPy + this.tileSize/2);
+                }
+                
                 this.ctx.shadowBlur = 0;
             }
             

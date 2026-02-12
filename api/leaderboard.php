@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-Admin-Password');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 const MAX_SCORES = 100;
+const ADMIN_PASSWORD = 'admin123'; // Deve corrispondere a db_config.php
 
 $dataDir = dirname(__DIR__) . '/data';
 $filePath = $dataDir . '/leaderboard.json';
@@ -28,6 +29,11 @@ function respond(array $payload, int $status = 200): void {
     http_response_code($status);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function validateAdminPassword(): bool {
+    $password = $_SERVER['HTTP_X_ADMIN_PASSWORD'] ?? '';
+    return $password === ADMIN_PASSWORD;
 }
 
 function sanitizeNickname(string $nickname): string {
@@ -151,6 +157,32 @@ if ($method === 'POST') {
         'success' => true,
         'position' => $position,
         'scores' => array_slice($scores, 0, 10)
+    ]);
+}
+
+// DELETE - Svuota classifica (richiede password admin)
+if ($method === 'DELETE') {
+    if (!validateAdminPassword()) {
+        respond([
+            'success' => false,
+            'error' => 'Password admin non valida'
+        ], 403);
+    }
+    
+    $fp = @fopen($filePath, 'w');
+    if ($fp === false) {
+        respond([
+            'success' => false,
+            'error' => 'Impossibile aprire il file classifica'
+        ], 500);
+    }
+    
+    fwrite($fp, '[]');
+    fclose($fp);
+    
+    respond([
+        'success' => true,
+        'message' => 'Classifica svuotata'
     ]);
 }
 

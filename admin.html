@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - i 100 Giorni</title>
+    <style>
+        :root {
+            --color-bg: #0f0f1e;
+            --color-gold: #ffd700;
+            --color-cyan: #4ecdc4;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--color-bg);
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            color: var(--color-gold);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: var(--color-cyan);
+            margin: 25px 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1rem;
+        }
+        input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .color-row label {
+            margin: 0;
+            min-width: 120px;
+        }
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .image-upload-box {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+        }
+        .image-upload-box:hover {
+            border-color: var(--color-cyan);
+            background: rgba(78, 205, 196, 0.1);
+        }
+        .image-upload-box.has-image {
+            border-style: solid;
+            border-color: var(--color-gold);
+        }
+        .image-preview {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+        }
+        .image-upload-placeholder {
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        .image-info {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+        .character-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .character-card h4 {
+            color: var(--color-gold);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .character-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .character-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .clear-image-btn {
+            background: rgba(255,107,107,0.2);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .clear-image-btn:hover {
+            background: rgba(255,107,107,0.3);
+        }
+        .size-hint {
+            background: rgba(78, 205, 196, 0.15);
+            border: 1px solid var(--color-cyan);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .size-hint strong {
+            color: var(--color-gold);
+        }
+        .btn {
+            background: linear-gradient(145deg, var(--color-gold), #ffaa00);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1a1a2e;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary {
+            background: linear-gradient(145deg, var(--color-cyan), #44a8a0);
+        }
+        .btn-danger {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+        }
+        .preview {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .preview-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .leaderboard-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+        }
+        .toast.show { display: block; }
+        .back-link {
+            display: inline-block;
+            color: var(--color-cyan);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: var(--color-gold);
+            color: #1a1a2e;
+            border-color: var(--color-gold);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Torna al gioco</a>
+        <h1>🎮 Admin Panel</h1>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="evento">📅 Evento</button>
+            <button class="tab" data-tab="colori">🎨 Colori</button>
+            <button class="tab" data-tab="personaggi">😀 Personaggi</button>
+            <button class="tab" data-tab="leaderboard">🏆 Classifica</button>
+        </div>
+
+        <!-- TAB EVENTO -->
+        <div class="tab-content active" id="tab-evento">
+            <h2>📅 Informazioni Evento</h2>
+            <div class="form-group">
+                <label>Titolo Evento</label>
+                <input type="text" id="event-title" value="i 100 Giorni" placeholder="i 100 Giorni">
+            </div>
+            <div class="form-group">
+                <label>Data Evento</label>
+                <input type="text" id="event-date" value="Sabato 14 Marzo 2026" placeholder="Sabato 14 Marzo 2026">
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="event-location" value="OPIUM - PORDENONE" placeholder="OPIUM - PORDENONE">
+            </div>
+            
+            <div class="preview" id="event-preview">
+                <div class="preview-title" id="preview-title">🎓 i 100 Giorni 🎓</div>
+                <div style="color: var(--color-gold);" id="preview-date">📅 Sabato 14 Marzo 2026</div>
+                <div style="color: #ec4899;" id="preview-location">📍 OPIUM - PORDENONE</div>
+            </div>
+        </div>
+
+        <!-- TAB COLORI -->
+        <div class="tab-content" id="tab-colori">
+            <h2>🎨 Colori Tema</h2>
+            <div class="form-group color-row">
+                <label>Colore Principale (Gold)</label>
+                <input type="color" id="color-gold" value="#ffd700">
+            </div>
+            <div class="form-group color-row">
+                <label>Colore Secondario (Cyan)</label>
+                <input type="color" id="color-cyan" value="#4ecdc4">
+            </div>
+            <div class="form-group color-row">
+                <label>Colore Sfondo</label>
+                <input type="color" id="color-bg" value="#0f0f1e">
+            </div>
+            <div class="form-group color-row">
+                <label>Colore Accento (Rosa)</label>
+                <input type="color" id="color-pink" value="#ec4899">
+            </div>
+            <div class="form-group color-row">
+                <label>Colore Muri</label>
+                <input type="color" id="color-wall" value="#1a1a3e">
+            </div>
+        </div>
+
+        <!-- TAB PERSONAGGI -->
+        <div class="tab-content" id="tab-personaggi">
+            <h2>�️ Personaggi</h2>
+            
+            <div class="size-hint">
+                <strong>📐 Dimensioni consigliate:</strong><br>
+                • Immagini: <strong>64x64 px</strong> (quadrate, PNG trasparente consigliato)<br>
+                • Max 100KB per immagine<br>
+                • Se non carichi un'immagine, verrà usata l'emoji
+            </div>
+
+            <!-- GIOCATORE -->
+            <div class="character-card">
+                <h4>🎮 Giocatore Principale</h4>
+                <div class="character-row">
+                    <div class="form-group">
+                        <label>Emoji fallback</label>
+                        <input type="text" id="emoji-player" value="🎓" maxlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Immagine (64x64 px)</label>
+                        <div class="image-upload-box" id="upload-player" onclick="triggerUpload('player')">
+                            <div class="image-upload-placeholder" id="placeholder-player">📷</div>
+                            <img class="image-preview" id="preview-player" style="display:none">
+                            <div class="image-info">Clicca per caricare</div>
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('player')" style="display:none" id="clear-player">🗑️ Rimuovi</button>
+                        <input type="file" id="file-player" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'player')">
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEMICI -->
+            <div class="character-card">
+                <h4>👨‍🏫 Nemici (Professori)</h4>
+                <div class="emoji-grid">
+                    <div class="form-group">
+                        <label>Nemico 1</label>
+                        <input type="text" id="enemy-1" value="👨‍🏫" maxlength="8" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-enemy1" onclick="triggerUpload('enemy1')">
+                            <div class="image-upload-placeholder" id="placeholder-enemy1">📷</div>
+                            <img class="image-preview" id="preview-enemy1" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('enemy1')" style="display:none" id="clear-enemy1">🗑️</button>
+                        <input type="file" id="file-enemy1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy1')">
+                    </div>
+                    <div class="form-group">
+                        <label>Nemico 2</label>
+                        <input type="text" id="enemy-2" value="👩‍🏫" maxlength="8" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-enemy2" onclick="triggerUpload('enemy2')">
+                            <div class="image-upload-placeholder" id="placeholder-enemy2">📷</div>
+                            <img class="image-preview" id="preview-enemy2" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('enemy2')" style="display:none" id="clear-enemy2">🗑️</button>
+                        <input type="file" id="file-enemy2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy2')">
+                    </div>
+                    <div class="form-group">
+                        <label>Nemico 3</label>
+                        <input type="text" id="enemy-3" value="🧑‍🏫" maxlength="8" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-enemy3" onclick="triggerUpload('enemy3')">
+                            <div class="image-upload-placeholder" id="placeholder-enemy3">📷</div>
+                            <img class="image-preview" id="preview-enemy3" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('enemy3')" style="display:none" id="clear-enemy3">🗑️</button>
+                        <input type="file" id="file-enemy3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy3')">
+                    </div>
+                    <div class="form-group">
+                        <label>Nemico 4</label>
+                        <input type="text" id="enemy-4" value="👴" maxlength="8" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-enemy4" onclick="triggerUpload('enemy4')">
+                            <div class="image-upload-placeholder" id="placeholder-enemy4">📷</div>
+                            <img class="image-preview" id="preview-enemy4" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('enemy4')" style="display:none" id="clear-enemy4">🗑️</button>
+                        <input type="file" id="file-enemy4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'enemy4')">
+                    </div>
+                </div>
+            </div>
+
+            <!-- OGGETTI -->
+            <div class="character-card">
+                <h4>🎁 Oggetti</h4>
+                <div class="emoji-grid">
+                    <div class="form-group">
+                        <label>Oggetto Base (10 pts)</label>
+                        <input type="text" id="emoji-beer" value="🍺" maxlength="4" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer" onclick="triggerUpload('beer')">
+                            <div class="image-upload-placeholder" id="placeholder-beer">📷</div>
+                            <img class="image-preview" id="preview-beer" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('beer')" style="display:none" id="clear-beer">🗑️</button>
+                        <input type="file" id="file-beer" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer')">
+                    </div>
+                    <div class="form-group">
+                        <label>Oggetto Bonus (50 pts)</label>
+                        <input type="text" id="emoji-vodka" value="🍾" maxlength="4" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka" onclick="triggerUpload('vodka')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka">📷</div>
+                            <img class="image-preview" id="preview-vodka" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka')" style="display:none" id="clear-vodka">🗑️</button>
+                        <input type="file" id="file-vodka" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka')">
+                    </div>
+                    <div class="form-group">
+                        <label>Power-Up</label>
+                        <input type="text" id="emoji-powerup" value="📜" maxlength="4" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup" onclick="triggerUpload('powerup')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup">📷</div>
+                            <img class="image-preview" id="preview-powerup" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup')" style="display:none" id="clear-powerup">🗑️</button>
+                        <input type="file" id="file-powerup" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup')">
+                    </div>
+                    <div class="form-group">
+                        <label>Nemico Spaventato</label>
+                        <input type="text" id="emoji-scared" value="😰" maxlength="4" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-scared" onclick="triggerUpload('scared')">
+                            <div class="image-upload-placeholder" id="placeholder-scared">📷</div>
+                            <img class="image-preview" id="preview-scared" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('scared')" style="display:none" id="clear-scared">🗑️</button>
+                        <input type="file" id="file-scared" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'scared')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB LEADERBOARD -->
+        <div class="tab-content" id="tab-leaderboard">
+            <h2>🏆 Classifica</h2>
+            <div class="leaderboard-list" id="admin-leaderboard">
+                <p style="text-align: center; opacity: 0.5;">Caricamento...</p>
+            </div>
+            <button class="btn btn-secondary" onclick="loadLeaderboard()">🔄 Aggiorna</button>
+            <button class="btn btn-danger" onclick="clearLeaderboard()">🗑️ Svuota Classifica</button>
+        </div>
+
+        <button class="btn" onclick="saveConfig()">💾 Salva Configurazione</button>
+        <button class="btn btn-secondary" onclick="exportConfig()">📤 Esporta JSON</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📥 Importa JSON</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importConfig(event)">
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Password admin (deve corrispondere a quella in api/db_config.php)
+        let adminPassword = localStorage.getItem('100giorni_admin_password') || '';
+        
+        // Storage per URL immagini caricate sul server
+        let uploadedImages = {};
+        
+        // File in attesa di upload
+        let pendingUploads = {};
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Chiedi password admin se non salvata
+        function ensureAdminPassword() {
+            if (!adminPassword) {
+                const pwd = prompt('Inserisci la password admin:');
+                if (pwd) {
+                    adminPassword = pwd;
+                    localStorage.setItem('100giorni_admin_password', pwd);
+                }
+            }
+            return adminPassword;
+        }
+
+        // Image upload functions
+        function triggerUpload(key) {
+            document.getElementById('file-' + key).click();
+        }
+
+        async function handleImageUpload(event, key) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Check size (max 100KB)
+            if (file.size > 100 * 1024) {
+                showToast('❌ Immagine troppo grande! Max 100KB');
+                return;
+            }
+
+            // Mostra anteprima locale
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('preview-' + key);
+                const placeholder = document.getElementById('placeholder-' + key);
+                const clearBtn = document.getElementById('clear-' + key);
+                const uploadBox = document.getElementById('upload-' + key);
+                
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                clearBtn.style.display = 'inline-block';
+                uploadBox.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+            
+            // Salva file per upload successivo
+            pendingUploads[key] = file;
+            showToast('📷 Immagine selezionata - Salva per caricarla sul server');
+        }
+
+        async function uploadImageToServer(key, file) {
+            if (!ensureAdminPassword()) {
+                throw new Error('Password admin richiesta');
+            }
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('key', key);
+            
+            const res = await fetch('api/images.php', {
+                method: 'POST',
+                headers: {
+                    'X-Admin-Password': adminPassword
+                },
+                body: formData
+            });
+            
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Errore upload');
+            }
+            
+            return data.url;
+        }
+
+        async function clearImage(key) {
+            // Rimuovi da pending
+            delete pendingUploads[key];
+            
+            // Se era già sul server, elimina
+            if (uploadedImages[key]) {
+                if (!ensureAdminPassword()) {
+                    showToast('❌ Password admin richiesta');
+                    return;
+                }
+                
+                try {
+                    await fetch('api/images.php', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Admin-Password': adminPassword
+                        },
+                        body: JSON.stringify({ key: key })
+                    });
+                } catch (e) {
+                    console.error('Errore eliminazione:', e);
+                }
+            }
+            
+            delete uploadedImages[key];
+            
+            const preview = document.getElementById('preview-' + key);
+            const placeholder = document.getElementById('placeholder-' + key);
+            const clearBtn = document.getElementById('clear-' + key);
+            const uploadBox = document.getElementById('upload-' + key);
+            const fileInput = document.getElementById('file-' + key);
+            
+            preview.src = '';
+            preview.style.display = 'none';
+            placeholder.style.display = 'block';
+            clearBtn.style.display = 'none';
+            uploadBox.classList.remove('has-image');
+            fileInput.value = '';
+            
+            showToast('🗑️ Immagine rimossa');
+        }
+
+        function loadImagePreview(key, url) {
+            if (!url) return;
+            
+            uploadedImages[key] = url;
+            
+            const preview = document.getElementById('preview-' + key);
+            const placeholder = document.getElementById('placeholder-' + key);
+            const clearBtn = document.getElementById('clear-' + key);
+            const uploadBox = document.getElementById('upload-' + key);
+            
+            if (preview && placeholder) {
+                preview.src = url;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = 'inline-block';
+                if (uploadBox) uploadBox.classList.add('has-image');
+            }
+        }
+
+        // Load config from server API (with localStorage fallback)
+        async function loadConfig() {
+            try {
+                const res = await fetch('api/config.php');
+                const data = await res.json();
+                
+                if (data.success) {
+                    applyConfigToForm(data.config);
+                    console.log('Config loaded from:', data.source);
+                    return;
+                }
+            } catch (e) {
+                console.log('API not available, trying localStorage');
+            }
+            
+            // Fallback to localStorage
+            const saved = localStorage.getItem('100giorni_admin_config');
+            if (saved) {
+                try {
+                    applyConfigToForm(JSON.parse(saved));
+                } catch (e) {
+                    console.error('Error loading config:', e);
+                }
+            }
+        }
+        
+        function applyConfigToForm(config) {
+            if (config.event) {
+                document.getElementById('event-title').value = config.event.title || '';
+                document.getElementById('event-date').value = config.event.date || '';
+                document.getElementById('event-location').value = config.event.location || '';
+            }
+            if (config.colors) {
+                document.getElementById('color-gold').value = config.colors.gold || '#ffd700';
+                document.getElementById('color-cyan').value = config.colors.cyan || '#4ecdc4';
+                document.getElementById('color-bg').value = config.colors.bg || '#0f0f1e';
+                document.getElementById('color-pink').value = config.colors.pink || '#ec4899';
+                document.getElementById('color-wall').value = config.colors.wall || '#1a1a3e';
+            }
+            if (config.emojis) {
+                document.getElementById('emoji-player').value = config.emojis.player || '🎓';
+                document.getElementById('emoji-beer').value = config.emojis.beer || '🍺';
+                document.getElementById('emoji-vodka').value = config.emojis.vodka || '🍾';
+                document.getElementById('emoji-powerup').value = config.emojis.powerup || '📜';
+                document.getElementById('emoji-scared').value = config.emojis.scared || '😰';
+                if (config.emojis.enemies) {
+                    config.emojis.enemies.forEach((e, i) => {
+                        const el = document.getElementById('enemy-' + (i + 1));
+                        if (el) el.value = e;
+                    });
+                }
+            }
+            // Load images (now URLs from server)
+            if (config.images) {
+                if (config.images.player) loadImagePreview('player', config.images.player);
+                if (config.images.beer) loadImagePreview('beer', config.images.beer);
+                if (config.images.vodka) loadImagePreview('vodka', config.images.vodka);
+                if (config.images.powerup) loadImagePreview('powerup', config.images.powerup);
+                if (config.images.scared) loadImagePreview('scared', config.images.scared);
+                if (config.images.enemies) {
+                    config.images.enemies.forEach((url, i) => {
+                        if (url) loadImagePreview('enemy' + (i + 1), url);
+                    });
+                }
+            }
+            updatePreview();
+        }
+
+        function getConfig() {
+            return {
+                event: {
+                    title: document.getElementById('event-title').value,
+                    date: document.getElementById('event-date').value,
+                    location: document.getElementById('event-location').value
+                },
+                colors: {
+                    gold: document.getElementById('color-gold').value,
+                    cyan: document.getElementById('color-cyan').value,
+                    bg: document.getElementById('color-bg').value,
+                    pink: document.getElementById('color-pink').value,
+                    wall: document.getElementById('color-wall').value
+                },
+                emojis: {
+                    player: document.getElementById('emoji-player').value,
+                    beer: document.getElementById('emoji-beer').value,
+                    vodka: document.getElementById('emoji-vodka').value,
+                    powerup: document.getElementById('emoji-powerup').value,
+                    scared: document.getElementById('emoji-scared').value,
+                    enemies: [
+                        document.getElementById('enemy-1').value,
+                        document.getElementById('enemy-2').value,
+                        document.getElementById('enemy-3').value,
+                        document.getElementById('enemy-4').value
+                    ]
+                }
+            };
+        }
+
+        async function saveConfig() {
+            if (!ensureAdminPassword()) {
+                showToast('❌ Password admin richiesta');
+                return;
+            }
+            
+            showToast('⏳ Salvataggio in corso...');
+            
+            try {
+                // 1. Upload pending images
+                for (const [key, file] of Object.entries(pendingUploads)) {
+                    try {
+                        const url = await uploadImageToServer(key, file);
+                        uploadedImages[key] = url;
+                        console.log(`Uploaded ${key}: ${url}`);
+                    } catch (e) {
+                        console.error(`Error uploading ${key}:`, e);
+                        showToast(`❌ Errore upload ${key}: ${e.message}`);
+                        return;
+                    }
+                }
+                pendingUploads = {};
+                
+                // 2. Save config to server
+                const config = getConfig();
+                const res = await fetch('api/config.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Password': adminPassword
+                    },
+                    body: JSON.stringify(config)
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Also save to localStorage as backup
+                    localStorage.setItem('100giorni_admin_config', JSON.stringify({
+                        ...config,
+                        images: uploadedImages
+                    }));
+                    showToast('✅ Configurazione salvata sul server!');
+                } else {
+                    throw new Error(data.error || 'Errore salvataggio');
+                }
+                
+            } catch (e) {
+                console.error('Save error:', e);
+                // Fallback: save only to localStorage
+                const config = getConfig();
+                localStorage.setItem('100giorni_admin_config', JSON.stringify(config));
+                showToast('⚠️ Salvato solo in locale: ' + e.message);
+            }
+        }
+
+        function exportConfig() {
+            const config = {
+                ...getConfig(),
+                images: uploadedImages
+            };
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '100giorni-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📤 Configurazione esportata!');
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    applyConfigToForm(config);
+                    showToast('📥 Configurazione importata! Salva per applicare.');
+                } catch (err) {
+                    showToast('❌ File non valido');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updatePreview() {
+            document.getElementById('preview-title').textContent = '🎓 ' + document.getElementById('event-title').value + ' 🎓';
+            document.getElementById('preview-date').textContent = '📅 ' + document.getElementById('event-date').value;
+            document.getElementById('preview-location').textContent = '📍 ' + document.getElementById('event-location').value;
+        }
+
+        // Live preview
+        ['event-title', 'event-date', 'event-location'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+        });
+
+        // Leaderboard functions
+        async function loadLeaderboard() {
+            const list = document.getElementById('admin-leaderboard');
+            try {
+                const res = await fetch('api/leaderboard.php?limit=50');
+                const data = await res.json();
+                
+                if (data.success && data.scores.length > 0) {
+                    list.innerHTML = data.scores.map((s, i) => `
+                        <div class="leaderboard-entry">
+                            <span>#${i + 1} ${s.nickname}</span>
+                            <span>${s.score} pts (Lv.${s.level})</span>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<p style="text-align: center; opacity: 0.5;">Nessun punteggio</p>';
+                }
+            } catch (e) {
+                list.innerHTML = '<p style="text-align: center; color: #ff6b6b;">Errore caricamento</p>';
+            }
+        }
+
+        async function clearLeaderboard() {
+            if (!confirm('Sei sicuro di voler svuotare la classifica? Questa azione non può essere annullata.')) {
+                return;
+            }
+            
+            if (!ensureAdminPassword()) {
+                showToast('❌ Password admin richiesta');
+                return;
+            }
+            
+            try {
+                const res = await fetch('api/leaderboard.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Admin-Password': adminPassword
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('🗑️ Classifica svuotata');
+                    loadLeaderboard();
+                } else {
+                    showToast('❌ ' + (data.error || 'Errore'));
+                }
+            } catch (e) {
+                showToast('❌ Errore: ' + e.message);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Initialize
+        loadConfig();
+        loadLeaderboard();
+    </script>
+</body>
+</html>

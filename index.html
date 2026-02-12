@@ -25,6 +25,49 @@
     <!-- Styles -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css?v=20260210">
+    <script>
+        // Applica colori tema personalizzati da admin config
+        (function() {
+            const saved = localStorage.getItem('100giorni_admin_config');
+            if (!saved) return;
+            try {
+                const config = JSON.parse(saved);
+                if (config.colors) {
+                    const root = document.documentElement;
+                    if (config.colors.gold) root.style.setProperty('--color-gold', config.colors.gold);
+                    if (config.colors.cyan) root.style.setProperty('--color-cyan', config.colors.cyan);
+                    if (config.colors.bg) root.style.setProperty('--color-bg', config.colors.bg);
+                    if (config.colors.wall) root.style.setProperty('--color-wall', config.colors.wall);
+                }
+                // Applica testi evento dopo il DOM load
+                window._adminEventConfig = config.event;
+            } catch (e) {}
+        })();
+        // Applica testi evento quando DOM è pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            const cfg = window._adminEventConfig;
+            if (!cfg) return;
+            const titleEl = document.getElementById('game-title');
+            const dateEl = document.getElementById('event-date-display');
+            const locEl = document.getElementById('event-location-display');
+            const bgTitle = document.querySelector('.event-bg-overlay span:first-child');
+            const bgDate = document.querySelector('.event-bg-overlay span:nth-child(2)');
+            const bgLoc = document.querySelector('.event-bg-overlay span:nth-child(3)');
+            
+            if (cfg.title) {
+                if (titleEl) titleEl.textContent = '🎓 ' + cfg.title + ' 🎓';
+                if (bgTitle) bgTitle.textContent = cfg.title;
+            }
+            if (cfg.date) {
+                if (dateEl) dateEl.textContent = '📅 ' + cfg.date;
+                if (bgDate) bgDate.textContent = '📅 ' + cfg.date;
+            }
+            if (cfg.location) {
+                if (locEl) locEl.textContent = '📍 ' + cfg.location;
+                if (bgLoc) bgLoc.textContent = '📍 ' + cfg.location;
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- Rotate Warning -->
@@ -42,11 +85,11 @@
 
     <!-- Title Screen -->
     <div id="title-screen">
-        <h1>🎓 i 100 Giorni 🎓</h1>
+        <h1 id="game-title">🎓 i 100 Giorni 🎓</h1>
         <div class="subtitle">— The Game —</div>
         <div class="event-info">
-            <div class="event-date">📅 Sabato 14 Marzo 2026</div>
-            <div class="event-location">📍 OPIUM - PORDENONE</div>
+            <div class="event-date" id="event-date-display">📅 Sabato 14 Marzo 2026</div>
+            <div class="event-location" id="event-location-display">📍 OPIUM - PORDENONE</div>
         </div>
         <button class="play-btn" id="start-btn">▶ GIOCA</button>
         <button class="play-btn secondary leaderboard-home-btn" id="leaderboard-btn">🏆 CLASSIFICA</button>

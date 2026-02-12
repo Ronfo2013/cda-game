@@ -2,6 +2,34 @@
 // GAME CONFIGURATION
 // ============================================
 
+// Configurazione caricata da server/localStorage
+let ADMIN_CONFIG = null;
+
+// Carica configurazione da server API (con fallback localStorage)
+async function loadAdminConfig() {
+    // Prova prima dal server
+    try {
+        const res = await fetch('api/config.php');
+        const data = await res.json();
+        if (data.success) {
+            console.log('Config loaded from:', data.source);
+            return data.config;
+        }
+    } catch (e) {
+        console.log('Server API not available, trying localStorage');
+    }
+    
+    // Fallback localStorage
+    const saved = localStorage.getItem('100giorni_admin_config');
+    if (!saved) return null;
+    try {
+        return JSON.parse(saved);
+    } catch (e) {
+        return null;
+    }
+}
+
+// Configurazione base (aggiornata dopo il caricamento asincrono)
 const CONFIG = {
     // Grid settings
     COLS: 13,
@@ -19,7 +47,7 @@ const CONFIG = {
     SCORE_GHOST: 200,
     COMBO_MULTIPLIER: 1,   // Multiplied by combo level
 
-    // Enemies
+    // Enemies - valori di default, aggiornati da updateConfigFromAdmin()
     MAX_ENEMIES: 6,
     ENEMY_TYPES: [
         { emoji: '👨‍🏫', name: 'Prof. Mate', baseDelay: 18 },
@@ -37,7 +65,7 @@ const CONFIG = {
     TILE_VODKA: 3,
     TILE_POWERUP: 4,
 
-    // Emojis
+    // Emojis - valori di default, aggiornati da updateConfigFromAdmin()
     EMOJI_PLAYER: '🎓',
     EMOJI_SCARED_ENEMY: '😰',
     EMOJI_BEER: '🍺',
@@ -95,3 +123,90 @@ const ENEMY_START_POSITIONS = [
 
 // Player start position
 const PLAYER_START = { x: 6, y: 12 };
+
+// ============================================
+// IMAGE LOADER - Carica immagini personalizzate
+// ============================================
+
+const GAME_IMAGES = {
+    player: null,
+    beer: null,
+    vodka: null,
+    powerup: null,
+    scared: null,
+    enemies: [null, null, null, null, null, null]
+};
+
+// Precarica immagine da URL (server) o base64
+function preloadImage(src) {
+    return new Promise((resolve) => {
+        if (!src) {
+            resolve(null);
+            return;
+        }
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+    });
+}
+
+// Aggiorna CONFIG con i dati admin
+function updateConfigFromAdmin(config) {
+    if (!config) return;
+    
+    // Aggiorna emoji
+    if (config.emojis) {
+        if (config.emojis.player) CONFIG.EMOJI_PLAYER = config.emojis.player;
+        if (config.emojis.scared) CONFIG.EMOJI_SCARED_ENEMY = config.emojis.scared;
+        if (config.emojis.beer) CONFIG.EMOJI_BEER = config.emojis.beer;
+        if (config.emojis.vodka) CONFIG.EMOJI_VODKA = config.emojis.vodka;
+        if (config.emojis.powerup) CONFIG.EMOJI_POWERUP = config.emojis.powerup;
+        
+        // Aggiorna emoji nemici
+        if (config.emojis.enemies && Array.isArray(config.emojis.enemies)) {
+            config.emojis.enemies.forEach((emoji, i) => {
+                if (emoji && CONFIG.ENEMY_TYPES[i]) {
+                    CONFIG.ENEMY_TYPES[i].emoji = emoji;
+                }
+            });
+        }
+    }
+}
+
+// Carica tutte le immagini dalla configurazione admin
+async function loadGameImages() {
+    if (!ADMIN_CONFIG || !ADMIN_CONFIG.images) return;
+    
+    const images = ADMIN_CONFIG.images;
+    
+    // Carica immagini singole (ora sono URL dal server)
+    GAME_IMAGES.player = await preloadImage(images.player);
+    GAME_IMAGES.beer = await preloadImage(images.beer);
+    GAME_IMAGES.vodka = await preloadImage(images.vodka);
+    GAME_IMAGES.powerup = await preloadImage(images.powerup);
+    GAME_IMAGES.scared = await preloadImage(images.scared);
+    
+    // Carica immagini nemici
+    if (images.enemies && Array.isArray(images.enemies)) {
+        for (let i = 0; i < images.enemies.length; i++) {
+            GAME_IMAGES.enemies[i] = await preloadImage(images.enemies[i]);
+        }
+    }
+    
+    console.log('Game images loaded:', GAME_IMAGES);
+}
+
+// Inizializza configurazione e immagini
+async function initGameConfig() {
+    ADMIN_CONFIG = await loadAdminConfig();
+    if (ADMIN_CONFIG) {
+        updateConfigFromAdmin(ADMIN_CONFIG);
+        await loadGameImages();
+    }
+    console.log('Game config initialized:', CONFIG);
+}
+
+// Carica configurazione all'avvio
+initGameConfig();
+
