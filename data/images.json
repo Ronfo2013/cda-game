@@ -1,1 +1,83 @@
-{}
+{
+    "enemy": {
+        "filename": "enemy_1770919733_f483a5c3.png",
+        "original_name": "massimo pixel.png",
+        "mime_type": "image\/png",
+        "file_size": 9111,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:08:53"
+    },
+    "player1": {
+        "filename": "player1_1770919747_9b560690.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:09:07"
+    },
+    "player2": {
+        "filename": "player2_1770922229_e27a74be.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:50:29"
+    },
+    "player3": {
+        "filename": "player3_1770922229_be970d1e.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:50:29"
+    },
+    "player4": {
+        "filename": "player4_1770922229_317f4403.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:50:29"
+    },
+    "player5": {
+        "filename": "player5_1770922229_35d13915.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:50:29"
+    },
+    "player6": {
+        "filename": "player6_1770922229_1dc4819c.png",
+        "original_name": "pixel-art-1770918815314.png",
+        "mime_type": "image\/png",
+        "file_size": 6811,
+        "width": 256,
+        "height": 256,
+        "uploaded_at": "2026-02-12 19:50:29"
+    },
+    "favicon": {
+        "filename": "favicon_1770923158_db5e3546.png",
+        "original_name": "apple-icon.png",
+        "mime_type": "image\/png",
+        "file_size": 62600,
+        "width": 192,
+        "height": 192,
+        "uploaded_at": "2026-02-12 20:05:58"
+    },
+    "logo": {
+        "filename": "logo_1770923184_5511b8ce.png",
+        "original_name": "fgh.png",
+        "mime_type": "image\/png",
+        "file_size": 51297,
+        "width": 143,
+        "height": 154,
+        "uploaded_at": "2026-02-12 20:06:24"
+    }
+}

@@ -1,12 +1,12 @@
 <?php
 /**
- * Configurazione Database - i 100 Giorni Game
+ * Configurazione Database - Caffè Dell'Angolo Game
  * 
  * Modifica questi valori con le credenziali del tuo database MySQL
  */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'centogiorni_game');
+define('DB_NAME', 'cda_game');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');

@@ -1,5 +1,5 @@
 // ============================================
-// i 100 GIORNI - THE GAME - MAIN LOGIC
+// CAFFÈ DELL'ANGOLO - IL GIOCO - MAIN LOGIC
 // ============================================
 
 const Game = {
@@ -162,7 +162,9 @@ const Game = {
     // ========== MAZE MANAGEMENT ==========
     
     initMaze() {
-        this.maze = JSON.parse(JSON.stringify(MAZE_TEMPLATE));
+        // Seleziona il labirinto in base al livello (6 layout diversi)
+        const levelIndex = Math.min(this.level - 1, MAZE_TEMPLATES.length - 1);
+        this.maze = JSON.parse(JSON.stringify(MAZE_TEMPLATES[levelIndex]));
     },
     
     countDrinks() {
@@ -233,12 +235,14 @@ const Game = {
     
     collectItem() {
         const tile = this.maze[this.player.y][this.player.x];
+        const lvlIndex = Math.min(this.level - 1, 5);
         
         if (tile === CONFIG.TILE_BEER) {
             this.maze[this.player.y][this.player.x] = CONFIG.TILE_EMPTY;
             this.addScore(CONFIG.SCORE_BEER);
             this.addCombo();
-            this.createParticles(this.player.x, this.player.y, CONFIG.EMOJI_BEER, 3);
+            const beerEmoji = (CONFIG.EMOJI_BEERS && CONFIG.EMOJI_BEERS[lvlIndex]) || CONFIG.EMOJI_BEER;
+            this.createParticles(this.player.x, this.player.y, beerEmoji, 3);
             AudioManager.playCollect();
             VibrationManager.vibrate(10);
             
@@ -246,7 +250,8 @@ const Game = {
             this.maze[this.player.y][this.player.x] = CONFIG.TILE_EMPTY;
             this.addScore(CONFIG.SCORE_VODKA);
             this.addCombo();
-            this.createParticles(this.player.x, this.player.y, CONFIG.EMOJI_VODKA, 5);
+            const vodkaEmoji = (CONFIG.EMOJI_VODKAS && CONFIG.EMOJI_VODKAS[lvlIndex]) || CONFIG.EMOJI_VODKA;
+            this.createParticles(this.player.x, this.player.y, vodkaEmoji, 5);
             AudioManager.playVodka();
             VibrationManager.vibrate(30);
             
@@ -300,21 +305,17 @@ const Game = {
     // ========== ENEMY MANAGEMENT ==========
     
     getDifficultyProfile() {
-        if (this.level <= 1) {
-            return { enemies: 1, enemyDelayBonus: 9, graceFrames: 180 };
-        }
-        if (this.level === 2) {
-            return { enemies: 1, enemyDelayBonus: 7, graceFrames: 165 };
-        }
-        if (this.level === 3) {
-            return { enemies: 2, enemyDelayBonus: 5, graceFrames: 150 };
-        }
-        if (this.level === 4) {
-            return { enemies: 2, enemyDelayBonus: 2, graceFrames: 135 };
-        }
+        // Nemici progressivi: livello N = N nemici (max MAX_ENEMIES)
+        const enemies = Math.min(this.level, CONFIG.MAX_ENEMIES);
 
+        if (this.level <= 2) {
+            return { enemies, enemyDelayBonus: 6, graceFrames: 180 };
+        }
+        if (this.level <= 4) {
+            return { enemies, enemyDelayBonus: 3, graceFrames: 150 };
+        }
         return {
-            enemies: Math.min(this.level - 1, CONFIG.MAX_ENEMIES),
+            enemies,
             enemyDelayBonus: 0,
             graceFrames: CONFIG.GRACE_PERIOD
         };
@@ -328,8 +329,8 @@ const Game = {
 
         for (let i = 0; i < numEnemies; i++) {
             const pos = ENEMY_START_POSITIONS[i % ENEMY_START_POSITIONS.length];
-            // Base delay variabile tra 14 e 22 in base all'indice del nemico
-            const baseDelay = 14 + (i * 2);
+            // Base delay variabile tra 18 e 26 (rallentato rispetto a prima)
+            const baseDelay = 18 + (i * 2);
             const moveDelay = Math.max(11, baseDelay - speedBonus + profile.enemyDelayBonus);
             
             this.enemies.push({
@@ -427,7 +428,7 @@ const Game = {
             
             if (dist < 0.8) {
                 if (this.powerUpActive) {
-                    // Eat the professor!
+                    // Eat the enemy!
                     this.addScore(CONFIG.SCORE_GHOST);
                     this.createParticles(enemy.x, enemy.y, '💫', 8);
                     enemy.x = 6;
@@ -473,10 +474,8 @@ const Game = {
     
     showLevelAnnounce() {
         const announce = document.getElementById('level-announce');
-        const numProfs = Math.min(this.level, CONFIG.MAX_ENEMIES);
         announce.innerHTML = `
             <span class="level-num">LIVELLO ${this.level}</span>
-            <span class="level-info">${'👨‍🏫'.repeat(numProfs)} ${numProfs} Professor${numProfs > 1 ? 'i' : 'e'}</span>
         `;
         announce.style.display = 'block';
         
@@ -547,6 +546,14 @@ const Game = {
     },
     
     drawMaze() {
+        const lvlIndex = Math.min(this.level - 1, 5);
+        const beerImage = (GAME_IMAGES.beers && GAME_IMAGES.beers[lvlIndex]) || GAME_IMAGES.beer;
+        const vodkaImage = (GAME_IMAGES.vodkas && GAME_IMAGES.vodkas[lvlIndex]) || GAME_IMAGES.vodka;
+        const powerupImage = (GAME_IMAGES.powerups && GAME_IMAGES.powerups[lvlIndex]) || GAME_IMAGES.powerup;
+        const beerEmoji = (CONFIG.EMOJI_BEERS && CONFIG.EMOJI_BEERS[lvlIndex]) || CONFIG.EMOJI_BEER;
+        const vodkaEmoji = (CONFIG.EMOJI_VODKAS && CONFIG.EMOJI_VODKAS[lvlIndex]) || CONFIG.EMOJI_VODKA;
+        const powerupEmoji = (CONFIG.EMOJI_POWERUPS && CONFIG.EMOJI_POWERUPS[lvlIndex]) || CONFIG.EMOJI_POWERUP;
+        
         for (let y = 0; y < CONFIG.ROWS; y++) {
             for (let x = 0; x < CONFIG.COLS; x++) {
                 const tile = this.maze[y][x];
@@ -561,13 +568,13 @@ const Game = {
                     this.ctx.strokeRect(px + 2, py + 2, this.tileSize - 4, this.tileSize - 4);
                     
                 } else if (tile === CONFIG.TILE_BEER) {
-                    this.drawSpriteOrEmoji(GAME_IMAGES.beer, CONFIG.EMOJI_BEER, px, py, 0.85);
+                    this.drawSpriteOrEmoji(beerImage, beerEmoji, px, py, 0.85);
                     
                 } else if (tile === CONFIG.TILE_VODKA) {
-                    this.drawSpriteOrEmoji(GAME_IMAGES.vodka, CONFIG.EMOJI_VODKA, px, py, 0.95);
+                    this.drawSpriteOrEmoji(vodkaImage, vodkaEmoji, px, py, 0.95);
                     
                 } else if (tile === CONFIG.TILE_POWERUP) {
-                    this.drawSpriteOrEmoji(GAME_IMAGES.powerup, CONFIG.EMOJI_POWERUP, px, py, 1.1);
+                    this.drawSpriteOrEmoji(powerupImage, powerupEmoji, px, py, 1.1);
                 }
             }
         }

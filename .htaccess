@@ -1,9 +1,15 @@
-# i 100 Giorni - Apache Configuration
+# Caffè Dell'Angolo - Apache Configuration
 
 # Enable rewrite engine
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
+    
+    # Serve index.php al posto di index.html (meta tag dinamici per social sharing)
+    DirectoryIndex index.php index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^$ index.php [L]
 </IfModule>
 
 # Compress files for faster loading

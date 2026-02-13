@@ -9,26 +9,28 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="i 100 Giorni - The Game. Celebra la maturità con questo divertente gioco in stile Pac-Man!">
-    <meta name="keywords" content="100 giorni, maturità, gioco, pacman, scuola">
+    <meta name="description" id="meta-description" content="Caffè Dell'Angolo - Il Gioco. Unisciti al gruppo e gioca in stile Pac-Man!">
+    <meta name="keywords" content="caffè dell'angolo, gioco, pacman, bar">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="i 100 Giorni - The Game">
-    <meta property="og:description" content="Celebra la maturità con questo divertente gioco!">
+    <meta property="og:title" id="og-title" content="Caffè Dell'Angolo - Il Gioco">
+    <meta property="og:description" id="og-description" content="Unisciti al gruppo e gioca in stile Pac-Man!">
     <meta property="og:type" content="website">
     
-    <title>i 100 Giorni - The Game</title>
+    <title>Caffè Dell'Angolo - Il Gioco</title>
     
-    <!-- Preconnect for API -->
-    <link rel="preconnect" href="https://www.icentogiorni.com">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0f1e">
+    <link rel="apple-touch-icon" href="favicon.svg">
     
     <!-- Styles -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="css/style.css?v=20260210">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" id="favicon-link">
+    <link rel="stylesheet" href="css/style.css?v=20260212">
     <script>
         // Applica colori tema personalizzati da admin config
         (function() {
-            const saved = localStorage.getItem('100giorni_admin_config');
+            const saved = localStorage.getItem('cda_admin_config');
             if (!saved) return;
             try {
                 const config = JSON.parse(saved);
@@ -43,31 +45,55 @@
                 window._adminEventConfig = config.event;
                 // Salva logo
                 window._adminEventLogo = config.event?.logo;
+                // Usa logo come favicon se presente
+                if (config.event?.logo) {
+                    const faviconEl = document.getElementById('favicon-link');
+                    if (faviconEl) {
+                        faviconEl.href = config.event.logo;
+                        faviconEl.type = 'image/png';
+                    }
+                }
+                // Usa favicon personalizzata (ha priorità sul logo)
+                if (config.images?.favicon) {
+                    const faviconEl = document.getElementById('favicon-link');
+                    if (faviconEl) {
+                        faviconEl.href = config.images.favicon;
+                        faviconEl.type = 'image/png';
+                    }
+                    // Aggiorna anche apple-touch-icon
+                    const touchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+                    if (touchIcon) touchIcon.href = config.images.favicon;
+                }
+                // Aggiorna titolo pagina da app config
+                if (config.app?.title) {
+                    document.title = config.app.title;
+                } else if (config.event?.title) {
+                    document.title = config.event.title + ' - The Game';
+                }
+                // Aggiorna meta description e og tags
+                if (config.app?.description) {
+                    const metaDesc = document.getElementById('meta-description');
+                    const ogDesc = document.getElementById('og-description');
+                    if (metaDesc) metaDesc.content = config.app.description;
+                    if (ogDesc) ogDesc.content = config.app.description;
+                }
+                if (config.app?.title) {
+                    const ogTitle = document.getElementById('og-title');
+                    if (ogTitle) ogTitle.content = config.app.title;
+                }
             } catch (e) {}
         })();
         // Applica testi evento quando DOM è pronto
         document.addEventListener('DOMContentLoaded', function() {
             const cfg = window._adminEventConfig;
             if (!cfg) return;
-            const titleEl = document.getElementById('game-title');
-            const dateEl = document.getElementById('event-date-display');
-            const locEl = document.getElementById('event-location-display');
-            const bgTitle = document.querySelector('.event-bg-overlay span:first-child');
-            const bgDate = document.querySelector('.event-bg-overlay span:nth-child(2)');
-            const bgLoc = document.querySelector('.event-bg-overlay span:nth-child(3)');
+            const textTitle = document.getElementById('text-title');
+            const textDate = document.getElementById('text-date');
+            const textLoc = document.getElementById('text-location');
             
-            if (cfg.title) {
-                if (titleEl) titleEl.textContent = '🎓 ' + cfg.title + ' 🎓';
-                if (bgTitle) bgTitle.textContent = cfg.title;
-            }
-            if (cfg.date) {
-                if (dateEl) dateEl.textContent = '📅 ' + cfg.date;
-                if (bgDate) bgDate.textContent = '📅 ' + cfg.date;
-            }
-            if (cfg.location) {
-                if (locEl) locEl.textContent = '📍 ' + cfg.location;
-                if (bgLoc) bgLoc.textContent = '📍 ' + cfg.location;
-            }
+            if (cfg.title !== undefined && textTitle) textTitle.textContent = cfg.title;
+            if (cfg.date !== undefined && textDate) textDate.textContent = cfg.date;
+            if (cfg.location !== undefined && textLoc) textLoc.textContent = cfg.location;
             
             // Applica logo se presente
             const logo = window._adminEventLogo;
@@ -90,22 +116,16 @@
         <p>Gioca in verticale per un'esperienza migliore</p>
     </div>
 
-    <!-- Floating decorations -->
-    <div class="floating-emoji" style="top: 10%; left: 10%; animation-delay: 0s;">🍺</div>
-    <div class="floating-emoji" style="top: 20%; right: 15%; animation-delay: 1s;">🍾</div>
-    <div class="floating-emoji" style="bottom: 30%; left: 8%; animation-delay: 2s;">🎓</div>
-    <div class="floating-emoji" style="bottom: 15%; right: 10%; animation-delay: 3s;">📚</div>
-
     <!-- Title Screen -->
     <div id="title-screen">
         <div id="event-logo-container" style="display: none;">
             <img id="event-logo" src="" alt="Logo Evento">
         </div>
-        <h1 id="game-title"><span id="icon-title-left">🎓</span> i 100 Giorni <span id="icon-title-right">🎓</span></h1>
-        <div class="subtitle">— The Game —</div>
+        <h1 id="game-title"><span id="icon-title-left">🎓</span> <span id="text-title">Caffè Dell'Angolo</span> <span id="icon-title-right">🎓</span></h1>
+        <div class="subtitle">— Il Gioco —</div>
         <div class="event-info">
-            <div class="event-date" id="event-date-display"><span id="icon-date">📅</span> Sabato 14 Marzo 2026</div>
-            <div class="event-location" id="event-location-display"><span id="icon-location">📍</span> OPIUM - PORDENONE</div>
+            <div class="event-date" id="event-date-display"><span id="icon-date">📅</span> <span id="text-date">Gioca Anche tu!</span></div>
+            <div class="event-location" id="event-location-display"><span id="icon-location">📍</span> <span id="text-location"></span></div>
         </div>
         <button class="play-btn" id="start-btn">▶ GIOCA</button>
         <button class="play-btn secondary leaderboard-home-btn" id="leaderboard-btn"><span id="icon-leaderboard">🏆</span> CLASSIFICA</button>
@@ -113,20 +133,10 @@
             <div class="swipe-hand"><span id="icon-swipe">👆</span></div>
             <div class="swipe-instruction">Scorri sullo schermo per muoverti</div>
         </div>
-        <div class="instructions">
-            <span id="icon-inst-beer">🍺</span> Raccogli le bevande<br>
-            <span id="icon-inst-enemy">👨‍🏫</span> Evita i professori<br>
-            <span id="icon-inst-powerup">📜</span> Prendi il giustificativo per l'invincibilità!
-        </div>
     </div>
 
     <!-- Game Container -->
     <div id="game-container">
-        <div class="event-bg-overlay">
-            <span>i 100 Giorni</span>
-            <span>📅 Sabato 14 Marzo 2026</span>
-            <span>📍 OPIUM - PORDENONE</span>
-        </div>
         <div id="hud">
             <div class="hud-item" id="score"><span id="icon-hud-score">🏆</span> <span id="score-value">0</span></div>
             <div class="hud-item" id="level"><span id="icon-hud-level">📊</span> Lv.<span id="level-value">1</span></div>
@@ -168,10 +178,10 @@
             </div>
             
             <div class="tutorial-step" data-step="3" style="display: none;">
-                <div class="tutorial-emoji">👨‍🏫</div>
+                <div class="tutorial-emoji" id="tutorial-enemy-emoji">👾</div>
                 <h2>Sopravvivi</h2>
-                <p>Evita i professori: se ti prendono perdi una vita ❤️</p>
-                <p>Prendi il <strong>📜 giustificativo</strong> per diventare invincibile!</p>
+                <p>Evita i nemici: se ti prendono perdi una vita ❤️</p>
+                <p>Prendi il <strong>📜 power-up</strong> per diventare invincibile!</p>
                 <button class="tutorial-btn tutorial-start">Inizia a Giocare! 🎮</button>
             </div>
             <div class="tutorial-progress" id="tutorial-progress">1 / 3</div>
@@ -181,7 +191,7 @@
     <!-- Level Announcement -->
     <div id="level-announce">
         <span class="level-num">LIVELLO 1</span>
-        <span class="level-info">👨‍🏫 1 Professore</span>
+
     </div>
 
     <!-- Power-up Indicator -->
@@ -229,10 +239,16 @@
     <div id="toast" role="status" aria-live="polite"></div>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=20260210"></script>
-    <script src="js/audio.js?v=20260210"></script>
-    <script src="js/leaderboard.js?v=20260210"></script>
-    <script src="js/game.js?v=20260210"></script>
-    <script src="js/main.js?v=20260210"></script>
+    <script src="js/config.js?v=20260212"></script>
+    <script src="js/audio.js?v=20260212"></script>
+    <script src="js/leaderboard.js?v=20260212"></script>
+    <script src="js/game.js?v=20260212"></script>
+    <script src="js/main.js?v=20260212"></script>
+    <script>
+        // Registra Service Worker per PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
 </body>
 </html>

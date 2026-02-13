@@ -1,5 +1,191 @@
 [
     {
+        "nickname": "Spidy",
+        "score": 81500,
+        "level": 3,
+        "created_at": "2026-02-13T14:56:57+00:00"
+    },
+    {
+        "nickname": "Doge",
+        "score": 66180,
+        "level": 2,
+        "created_at": "2026-02-12T22:00:11+00:00"
+    },
+    {
+        "nickname": "Spidy",
+        "score": 55060,
+        "level": 1,
+        "created_at": "2026-02-12T21:30:03+00:00"
+    },
+    {
+        "nickname": "Spidy",
+        "score": 53160,
+        "level": 3,
+        "created_at": "2026-02-13T14:53:22+00:00"
+    },
+    {
+        "nickname": "Mery",
+        "score": 51140,
+        "level": 2,
+        "created_at": "2026-02-13T15:09:36+00:00"
+    },
+    {
+        "nickname": "Manu!",
+        "score": 32930,
+        "level": 1,
+        "created_at": "2026-02-13T12:19:53+00:00"
+    },
+    {
+        "nickname": "Al",
+        "score": 27430,
+        "level": 2,
+        "created_at": "2026-02-13T12:27:48+00:00"
+    },
+    {
+        "nickname": "Luca air",
+        "score": 24360,
+        "level": 2,
+        "created_at": "2026-02-13T16:29:17+00:00"
+    },
+    {
+        "nickname": "Angelo",
+        "score": 23750,
+        "level": 2,
+        "created_at": "2026-02-12T19:31:50+00:00"
+    },
+    {
+        "nickname": "Marcoro",
+        "score": 22580,
+        "level": 1,
+        "created_at": "2026-02-13T13:23:48+00:00"
+    },
+    {
+        "nickname": "Luca air",
+        "score": 21760,
+        "level": 2,
+        "created_at": "2026-02-13T16:20:46+00:00"
+    },
+    {
+        "nickname": "Doge",
+        "score": 21020,
+        "level": 1,
+        "created_at": "2026-02-12T21:58:01+00:00"
+    },
+    {
+        "nickname": "Angelo",
+        "score": 19810,
+        "level": 1,
+        "created_at": "2026-02-12T19:39:40+00:00"
+    },
+    {
+        "nickname": "Alex il Barba",
+        "score": 18900,
+        "level": 1,
+        "created_at": "2026-02-13T18:28:53+00:00"
+    },
+    {
+        "nickname": "Soidy",
+        "score": 18420,
+        "level": 2,
+        "created_at": "2026-02-12T21:28:52+00:00"
+    },
+    {
+        "nickname": "Doge",
+        "score": 17820,
+        "level": 1,
+        "created_at": "2026-02-12T21:55:55+00:00"
+    },
+    {
+        "nickname": "Mery",
+        "score": 16970,
+        "level": 1,
+        "created_at": "2026-02-13T12:27:29+00:00"
+    },
+    {
+        "nickname": "Angelo",
+        "score": 15920,
+        "level": 1,
+        "created_at": "2026-02-12T19:50:01+00:00"
+    },
+    {
+        "nickname": "Spidi",
+        "score": 15330,
+        "level": 1,
+        "created_at": "2026-02-12T21:27:13+00:00"
+    },
+    {
+        "nickname": "Spidy",
+        "score": 15290,
+        "level": 2,
+        "created_at": "2026-02-13T07:08:01+00:00"
+    },
+    {
+        "nickname": "Francy",
+        "score": 14730,
+        "level": 1,
+        "created_at": "2026-02-12T19:58:22+00:00"
+    },
+    {
+        "nickname": "Angelo",
+        "score": 14420,
+        "level": 1,
+        "created_at": "2026-02-13T07:29:44+00:00"
+    },
+    {
+        "nickname": "H",
+        "score": 13160,
+        "level": 1,
+        "created_at": "2026-02-13T13:08:46+00:00"
+    },
+    {
+        "nickname": "Marcoro",
+        "score": 12880,
+        "level": 1,
+        "created_at": "2026-02-13T13:25:54+00:00"
+    },
+    {
+        "nickname": "Marcoro",
+        "score": 9550,
+        "level": 1,
+        "created_at": "2026-02-13T13:22:24+00:00"
+    },
+    {
+        "nickname": "Al",
+        "score": 8000,
+        "level": 1,
+        "created_at": "2026-02-13T12:20:16+00:00"
+    },
+    {
+        "nickname": "Al",
+        "score": 7870,
+        "level": 1,
+        "created_at": "2026-02-13T12:22:28+00:00"
+    },
+    {
+        "nickname": "Marcoro",
+        "score": 6580,
+        "level": 1,
+        "created_at": "2026-02-13T13:21:17+00:00"
+    },
+    {
+        "nickname": "Luca air",
+        "score": 5850,
+        "level": 1,
+        "created_at": "2026-02-13T12:36:39+00:00"
+    },
+    {
+        "nickname": "Luca Air",
+        "score": 4080,
+        "level": 1,
+        "created_at": "2026-02-12T23:49:34+00:00"
+    },
+    {
+        "nickname": "Luca Air",
+        "score": 530,
+        "level": 1,
+        "created_at": "2026-02-12T23:47:09+00:00"
+    },
+    {
         "nickname": "TestAPI",
         "score": 500,
         "level": 3,

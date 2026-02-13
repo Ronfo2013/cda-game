@@ -16,7 +16,7 @@ const AudioManager = {
         this.musicEnabled = settings.musicEnabled !== false;
         this.soundEnabled = settings.soundEnabled !== false;
 
-        this.createAudioContext();
+        // Non creare l'AudioContext qui - attendere gesto utente
         this.setupUnlockListeners();
     },
 
@@ -26,6 +26,13 @@ const AudioManager = {
 
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Se l'AudioContext è sospeso (cosa normale sui browser moderni)
+            // non tentare di fare nulla fino al gesto dell'utente
+            if (this.audioContext.state === 'suspended') {
+                // L'AudioContext verrà sbloccato quando l'utente interagisce
+                return;
+            }
         } catch (e) {
             console.log('Web Audio API not supported');
             this.audioContext = null;
@@ -78,6 +85,14 @@ const AudioManager = {
 
         this.audioUnlocked = true;
         this.removeUnlockListeners();
+
+        // Piccolo delay per assicurarsi che l'AudioContext sia pronto
+        setTimeout(() => {
+            // Se la musica del titolo era in attesa, avviala ora
+            if (this.titleMusicPending) {
+                this.playTitleMusic();
+            }
+        }, 100);
     },
     
     // Play a simple beep
@@ -155,11 +170,16 @@ const AudioManager = {
     
     // Title screen music - Retro 80s style
     playTitleMusic() {
+        this.titleMusicPending = true;
         if (!this.musicEnabled || !this.audioUnlocked) return;
-        this.stopTitleMusic(); // Stop any existing
+        
+        this._stopTitleMusicPlayback(); // Stop any existing without clearing pending flag
         
         const ctx = this.audioContext;
-        if (!ctx) return;
+        if (!ctx || ctx.state === 'suspended') return;
+        
+        // Resetta il flag ora che la musica sta effettivamente per partire
+        this.titleMusicPending = false;
         
         // Sequenza melodica anni 80 stile arcade
         const melody = [
@@ -197,11 +217,64 @@ const AudioManager = {
         
         // Loop ogni 2 secondi
         this.titleMusicInterval = setInterval(() => {
-            this.playTitleMusic();
+            this._playTitleMusicLoop();
         }, 2000);
     },
     
+    _playTitleMusicLoop() {
+        // Versione per il loop che non imposta titleMusicPending
+        if (!this.musicEnabled || !this.audioUnlocked) return;
+        
+        this._stopTitleMusicPlayback(); // Stop any existing without clearing pending flag
+        
+        const ctx = this.audioContext;
+        if (!ctx || ctx.state === 'suspended') return;
+        
+        // Sequenza melodica anni 80 stile arcade
+        const melody = [
+            { freq: 523.25, time: 0, duration: 0.15 },    // C
+            { freq: 659.25, time: 0.2, duration: 0.15 },  // E
+            { freq: 783.99, time: 0.4, duration: 0.15 },  // G
+            { freq: 1046.50, time: 0.6, duration: 0.3 },  // C alta
+            { freq: 987.77, time: 1.0, duration: 0.15 },  // B
+            { freq: 783.99, time: 1.2, duration: 0.15 },  // G
+            { freq: 659.25, time: 1.4, duration: 0.3 }    // E
+        ];
+        
+        const startTime = ctx.currentTime;
+        this.titleMusicNodes = [];
+        
+        melody.forEach(note => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = 'square';
+            osc.frequency.value = note.freq;
+            
+            gain.gain.setValueAtTime(0.1, startTime + note.time);
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + note.time + note.duration);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start(startTime + note.time);
+            osc.stop(startTime + note.time + note.duration);
+            
+            this.titleMusicNodes.push({ osc, gain });
+        });
+        
+        // Loop ogni 2 secondi
+        this.titleMusicInterval = setInterval(() => {
+            this._playTitleMusicLoop();
+        }, 2000);
+    },
+
     stopTitleMusic() {
+        this.titleMusicPending = false;
+        this._stopTitleMusicPlayback();
+    },
+
+    _stopTitleMusicPlayback() {
         if (this.titleMusicInterval) {
             clearInterval(this.titleMusicInterval);
             this.titleMusicInterval = null;

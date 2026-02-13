@@ -1,10 +1,10 @@
 -- ============================================
--- i 100 GIORNI - DATABASE SCHEMA
+-- CAFFÈ DELL'ANGOLO - DATABASE SCHEMA
 -- ============================================
 
 -- Creazione database (opzionale, eseguire separatamente se necessario)
--- CREATE DATABASE IF NOT EXISTS centogiorni_game CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE centogiorni_game;
+-- CREATE DATABASE IF NOT EXISTS cda_game CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE cda_game;
 
 -- ============================================
 -- TABELLA: Configurazione Gioco
@@ -53,15 +53,15 @@ CREATE TABLE IF NOT EXISTS leaderboard (
 -- ============================================
 CREATE TABLE IF NOT EXISTS event_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(100) NOT NULL DEFAULT 'i 100 Giorni',
-    event_date VARCHAR(50) NOT NULL DEFAULT 'Sabato 14 Marzo 2026',
-    location VARCHAR(100) NOT NULL DEFAULT 'OPIUM - PORDENONE',
+    title VARCHAR(100) NOT NULL DEFAULT 'Caffè Dell''Angolo',
+    event_date VARCHAR(50) NOT NULL DEFAULT 'Gioca Anche tu!',
+    location VARCHAR(100) NOT NULL DEFAULT '',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Inserisci valori di default per evento
 INSERT INTO event_info (title, event_date, location) VALUES 
-('i 100 Giorni', 'Sabato 14 Marzo 2026', 'OPIUM - PORDENONE')
+('Caffè Dell''Angolo', 'Gioca Anche tu!', '')
 ON DUPLICATE KEY UPDATE id=id;
 
 -- ============================================

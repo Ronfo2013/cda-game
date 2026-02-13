@@ -1,6 +1,6 @@
-# 🎓 i 100 Giorni - The Game v2.0
+# ☕ Caffè Dell'Angolo - Il Gioco v2.0
 
-Gioco in stile Pac-Man per celebrare i 100 giorni alla maturità!
+Gioco in stile Pac-Man personalizzabile per eventi e locali!
 
 ## ✨ NOVITÀ VERSIONE 2.0
 
@@ -33,7 +33,7 @@ Gioco in stile Pac-Man per celebrare i 100 giorni alla maturità!
 ## 🚀 Installazione Ultra-Semplice
 
 ### 1. Scarica i File
-Estrai il file ZIP o usa la cartella `100giorni-game/`
+Estrai il file ZIP o usa la cartella del progetto
 
 ### 2. Carica su Hosting
 Via FTP o File Manager, carica **TUTTI** i file:
@@ -201,14 +201,14 @@ File: `css/style.css` (inizio file)
 ### Rivedere Tutorial
 Console browser (F12):
 ```javascript
-localStorage.removeItem('100giorni_tutorial_done');
+localStorage.removeItem('cda_tutorial_done');
 location.reload();
 ```
 
 ### Reset Classifica
 Console browser:
 ```javascript
-localStorage.removeItem('100giorni_leaderboard');
+localStorage.removeItem('cda_leaderboard');
 location.reload();
 ```
 
@@ -238,7 +238,7 @@ AudioManager.toggleSound();
 
 ### Tutorial non appare
 ```javascript
-localStorage.removeItem('100giorni_tutorial_done');
+localStorage.removeItem('cda_tutorial_done');
 location.reload();
 ```
 
@@ -283,7 +283,7 @@ location.reload();
 
 ```bash
 # 1. Scarica
-unzip 100giorni-game.zip
+unzip cda-game.zip
 
 # 2. Carica su hosting
 # (via FTP o drag & drop)
@@ -299,6 +299,6 @@ Uso personale ed educativo.
 
 ---
 
-**Buon divertimento! 🎓🍺**
+**Buon divertimento! ☕🍺**
 
 *v2.0 - Tutorial + Shared Leaderboard + Zero DB*

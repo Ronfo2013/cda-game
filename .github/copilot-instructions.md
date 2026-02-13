@@ -3,12 +3,12 @@
 ## Project Context
 - **Type:** Generic
 - **Language:** Unknown
-- **Root:** 100giorni-game
+- **Root:** cda
 
 ## Project Structure
 ```
-100giorni-game/
-├── 100giorni-game.code-workspace
+cda/
+├── CHANGELOG.md
 ├── INSTALL.txt
 ├── README.md
 ├── admin.html
@@ -17,6 +17,8 @@
 │   ├── db_config.php
 │   ├── images.php
 │   └── leaderboard.php
+├── cda.code-workspace
+├── contesto.md
 ├── css/
 │   └── style.css
 ├── data/
@@ -25,37 +27,27 @@
 │   └── leaderboard.json
 ├── db.sql
 ├── favicon.svg
-├── index.html
-├── js/
-│   ├── audio.js
-│   ├── config.js
-│   ├── game.js
-│   ├── leaderboard.js
-│   └── main.js
-└── progress.md
-└── ... (1 more)
+└── index.html
+└── ... (7 more)
 ```
 
 ## Architecture Diagram
 ```mermaid
 graph TD
-    100giorni_game[🏠 100giorni-game]
-    100giorni_game --> 100giorni_game_100giorni_game_code_workspace[📄 100giorni-game.code-workspace]
-    100giorni_game --> 100giorni_game_INSTALL_txt[📄 INSTALL.txt]
-    100giorni_game --> 100giorni_game_README_md[📝 README.md]
-    100giorni_game --> 100giorni_game_admin_html[🌐 admin.html]
-    100giorni_game --> 100giorni_game_api[📁 api]
-    100giorni_game_api --> 100giorni_game_api_config_php[🐘 config.php]
-    100giorni_game_api --> 100giorni_game_api_db_config_php[🐘 db_config.php]
-    100giorni_game_api --> 100giorni_game_api_images_php[🐘 images.php]
-    100giorni_game_api --> 100giorni_game_api_leaderboard_php[🐘 leaderboard.php]
-    100giorni_game --> 100giorni_game_css[📁 css]
-    100giorni_game_css --> 100giorni_game_css_style_css[🎨 style.css]
-    100giorni_game --> 100giorni_game_data[📁 data]
-    100giorni_game_data --> 100giorni_game_data_config_json[📋 config.json]
-    100giorni_game_data --> 100giorni_game_data_images_json[📋 images.json]
-    100giorni_game_data --> 100giorni_game_data_leaderboard_json[📋 leaderboard.json]
-    100giorni_game --> 100giorni_game_db_sql[📄 db.sql]
+    cda[🏠 cda]
+    cda --> cda_CHANGELOG_md[📝 CHANGELOG.md]
+    cda --> cda_INSTALL_txt[📄 INSTALL.txt]
+    cda --> cda_README_md[📝 README.md]
+    cda --> cda_admin_html[🌐 admin.html]
+    cda --> cda_api[📁 api]
+    cda_api --> cda_api_config_php[🐘 config.php]
+    cda_api --> cda_api_db_config_php[🐘 db_config.php]
+    cda_api --> cda_api_images_php[🐘 images.php]
+    cda_api --> cda_api_leaderboard_php[🐘 leaderboard.php]
+    cda --> cda_cda_code_workspace[📄 cda.code-workspace]
+    cda --> cda_contesto_md[📝 contesto.md]
+    cda --> cda_css[📁 css]
+    cda_css --> cda_css_style_css[🎨 style.css]
 ```
 
 ## Key Files

@@ -44,7 +44,7 @@ Implementato sistema per salvare immagini su server invece che localStorage:
 - **api/leaderboard.php**: Aggiunto metodo DELETE per svuotare classifica (richiede password admin)
 
 ### Setup database:
-1. Crea database MySQL `centogiorni_game`
+1. Crea database MySQL `cda_game`
 2. Esegui `db.sql` per creare tabelle
 3. Modifica credenziali in `api/db_config.php`
 4. La password admin di default è `admin123`

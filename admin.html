@@ -3,7 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - i 100 Giorni</title>
+    <title>Admin - Caffè Dell'Angolo</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" id="favicon-link">
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('cda_admin_config');
+                if (!saved) return;
+                const config = JSON.parse(saved);
+                // Favicon personalizzata (priorità: favicon > logo)
+                const faviconUrl = config.images?.favicon || config.event?.logo;
+                if (faviconUrl) {
+                    const el = document.getElementById('favicon-link');
+                    if (el) { el.href = faviconUrl; el.type = 'image/png'; }
+                }
+                if (config.app?.title) {
+                    document.title = 'Admin - ' + config.app.title;
+                } else if (config.event?.title) {
+                    document.title = 'Admin - ' + config.event.title;
+                }
+            } catch (e) {}
+        })();
+    </script>
     <style>
         :root {
             --color-bg: #0f0f1e;
@@ -253,17 +274,40 @@
             <h2>📅 Informazioni Evento</h2>
             <div class="form-group">
                 <label>Titolo Evento</label>
-                <input type="text" id="event-title" value="i 100 Giorni" placeholder="i 100 Giorni">
+                <input type="text" id="event-title" value="Caffè Dell'Angolo" placeholder="Caffè Dell'Angolo">
             </div>
             <div class="form-group">
                 <label>Data Evento</label>
-                <input type="text" id="event-date" value="Sabato 14 Marzo 2026" placeholder="Sabato 14 Marzo 2026">
+                <input type="text" id="event-date" value="Gioca Anche tu!" placeholder="Gioca Anche tu!">
             </div>
             <div class="form-group">
                 <label>Location</label>
-                <input type="text" id="event-location" value="OPIUM - PORDENONE" placeholder="OPIUM - PORDENONE">
+                <input type="text" id="event-location" value="" placeholder="">
             </div>
             
+            <h2>🌐 Titolo e Descrizione App</h2>
+            <div class="size-hint">💡 <strong>Info:</strong> Questi campi vengono usati come titolo e descrizione quando condividi il link dell'app (es. su WhatsApp, Facebook, ecc.)</div>
+            <div class="form-group">
+                <label>Titolo App (condivisione link)</label>
+                <input type="text" id="app-title" value="Caffè Dell'Angolo - Il Gioco" placeholder="Caffè Dell'Angolo - Il Gioco">
+            </div>
+            <div class="form-group">
+                <label>Descrizione App (condivisione link)</label>
+                <input type="text" id="app-description" value="Unisciti al gruppo e gioca in stile Pac-Man!" placeholder="Descrizione per social e motori di ricerca">
+            </div>
+
+            <h2>🔖 Favicon</h2>
+            <div class="size-hint">💡 <strong>Suggerimento:</strong> Usa un'immagine PNG quadrata (32x32 o 64x64 px) oppure SVG. Questa icona appare nella tab del browser.</div>
+            <div class="form-group">
+                <label>Favicon (icona tab browser)</label>
+                <div class="image-upload-box" id="upload-favicon" onclick="triggerUpload('favicon')">
+                    <div class="image-upload-placeholder" id="placeholder-favicon">🔖 Clicca per caricare</div>
+                    <img class="image-preview" id="preview-favicon" style="display:none; width: 64px; height: 64px;">
+                </div>
+                <button class="clear-image-btn" onclick="clearImage('favicon')" style="display:none" id="clear-favicon">🗑️ Rimuovi Favicon</button>
+                <input type="file" id="file-favicon" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'favicon')">
+            </div>
+
             <h2>🖼️ Logo Evento</h2>
             <div class="size-hint">💡 <strong>Suggerimento:</strong> Usa un'immagine PNG o SVG trasparente. Dimensione ideale: 200x200px, max 100KB</div>
             <div class="form-group">
@@ -277,9 +321,14 @@
             </div>
             
             <div class="preview" id="event-preview">
-                <div class="preview-title" id="preview-title">🎓 i 100 Giorni 🎓</div>
-                <div style="color: var(--color-gold);" id="preview-date">📅 Sabato 14 Marzo 2026</div>
-                <div style="color: #ec4899;" id="preview-location">📍 OPIUM - PORDENONE</div>
+                <div style="font-size:0.8rem; opacity:0.6; margin-bottom:8px;">Anteprima Link Condiviso:</div>
+                <div class="preview-title" id="preview-app-title" style="font-size:1.1rem; color: var(--color-cyan);">Caffè Dell'Angolo - Il Gioco</div>
+                <div style="font-size:0.85rem; opacity:0.7; margin-bottom:10px;" id="preview-app-desc">Unisciti al gruppo e gioca in stile Pac-Man!</div>
+                <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-top:5px;"></div>
+                <div style="font-size:0.8rem; opacity:0.6; margin-bottom:5px;">Anteprima Evento:</div>
+                <div class="preview-title" id="preview-title">Caffè Dell'Angolo</div>
+                <div style="color: var(--color-gold);" id="preview-date">📅 Gioca Anche tu!</div>
+                <div style="color: #ec4899;" id="preview-location"></div>
             </div>
         </div>
 
@@ -321,11 +370,11 @@
 
             <!-- NEMICO -->
             <div class="character-card">
-                <h4>👨‍🏫 Nemico (Professore)</h4>
+                <h4>� Nemico</h4>
                 <div class="character-row">
                     <div class="form-group">
                         <label>Emoji</label>
-                        <input type="text" id="emoji-enemy" value="👨‍🏫" placeholder="Qualsiasi emoji">
+                        <input type="text" id="emoji-enemy" value="�" placeholder="Qualsiasi emoji">
                     </div>
                     <div class="form-group">
                         <label>Immagine (64x64 px)</label>
@@ -418,49 +467,204 @@
                 </div>
             </div>
 
-            <!-- OGGETTI -->
+            <!-- OGGETTI PER LIVELLO -->
             <div class="character-card">
-                <h4>🎁 Oggetti</h4>
+                <h4>🍺 Oggetto Base (10 pts) - per livello</h4>
+                <p style="opacity:0.7;margin-bottom:15px;">Personalizza l'oggetto base per ogni livello</p>
                 <div class="emoji-grid">
                     <div class="form-group">
-                        <label>Oggetto Base (10 pts)</label>
-                        <input type="text" id="emoji-beer" value="🍺" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-beer" onclick="triggerUpload('beer')">
-                            <div class="image-upload-placeholder" id="placeholder-beer">📷</div>
-                            <img class="image-preview" id="preview-beer" style="display:none">
+                        <label>Livello 1</label>
+                        <input type="text" id="beer-1" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer1" onclick="triggerUpload('beer1')">
+                            <div class="image-upload-placeholder" id="placeholder-beer1">📷</div>
+                            <img class="image-preview" id="preview-beer1" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('beer')" style="display:none" id="clear-beer">🗑️</button>
-                        <input type="file" id="file-beer" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer')">
+                        <button class="clear-image-btn" onclick="clearImage('beer1')" style="display:none" id="clear-beer1">🗑️</button>
+                        <input type="file" id="file-beer1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer1')">
                     </div>
                     <div class="form-group">
-                        <label>Oggetto Bonus (50 pts)</label>
-                        <input type="text" id="emoji-vodka" value="🍾" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-vodka" onclick="triggerUpload('vodka')">
-                            <div class="image-upload-placeholder" id="placeholder-vodka">📷</div>
-                            <img class="image-preview" id="preview-vodka" style="display:none">
+                        <label>Livello 2</label>
+                        <input type="text" id="beer-2" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer2" onclick="triggerUpload('beer2')">
+                            <div class="image-upload-placeholder" id="placeholder-beer2">📷</div>
+                            <img class="image-preview" id="preview-beer2" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('vodka')" style="display:none" id="clear-vodka">🗑️</button>
-                        <input type="file" id="file-vodka" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka')">
+                        <button class="clear-image-btn" onclick="clearImage('beer2')" style="display:none" id="clear-beer2">🗑️</button>
+                        <input type="file" id="file-beer2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer2')">
                     </div>
                     <div class="form-group">
-                        <label>Power-Up</label>
-                        <input type="text" id="emoji-powerup" value="📜" placeholder="Qualsiasi emoji" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-powerup" onclick="triggerUpload('powerup')">
-                            <div class="image-upload-placeholder" id="placeholder-powerup">📷</div>
-                            <img class="image-preview" id="preview-powerup" style="display:none">
+                        <label>Livello 3</label>
+                        <input type="text" id="beer-3" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer3" onclick="triggerUpload('beer3')">
+                            <div class="image-upload-placeholder" id="placeholder-beer3">📷</div>
+                            <img class="image-preview" id="preview-beer3" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('powerup')" style="display:none" id="clear-powerup">🗑️</button>
-                        <input type="file" id="file-powerup" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup')">
+                        <button class="clear-image-btn" onclick="clearImage('beer3')" style="display:none" id="clear-beer3">🗑️</button>
+                        <input type="file" id="file-beer3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer3')">
                     </div>
                     <div class="form-group">
-                        <label>Nemico Spaventato</label>
-                        <input type="text" id="emoji-scared" value="😰" maxlength="4" style="margin-bottom:8px">
-                        <div class="image-upload-box" id="upload-scared" onclick="triggerUpload('scared')">
-                            <div class="image-upload-placeholder" id="placeholder-scared">📷</div>
-                            <img class="image-preview" id="preview-scared" style="display:none">
+                        <label>Livello 4</label>
+                        <input type="text" id="beer-4" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer4" onclick="triggerUpload('beer4')">
+                            <div class="image-upload-placeholder" id="placeholder-beer4">📷</div>
+                            <img class="image-preview" id="preview-beer4" style="display:none">
                         </div>
-                        <button class="clear-image-btn" onclick="clearImage('scared')" style="display:none" id="clear-scared">🗑️</button>
-                        <input type="file" id="file-scared" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'scared')">
+                        <button class="clear-image-btn" onclick="clearImage('beer4')" style="display:none" id="clear-beer4">🗑️</button>
+                        <input type="file" id="file-beer4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer4')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 5</label>
+                        <input type="text" id="beer-5" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer5" onclick="triggerUpload('beer5')">
+                            <div class="image-upload-placeholder" id="placeholder-beer5">📷</div>
+                            <img class="image-preview" id="preview-beer5" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('beer5')" style="display:none" id="clear-beer5">🗑️</button>
+                        <input type="file" id="file-beer5" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer5')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 6+</label>
+                        <input type="text" id="beer-6" value="🍺" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-beer6" onclick="triggerUpload('beer6')">
+                            <div class="image-upload-placeholder" id="placeholder-beer6">📷</div>
+                            <img class="image-preview" id="preview-beer6" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('beer6')" style="display:none" id="clear-beer6">🗑️</button>
+                        <input type="file" id="file-beer6" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'beer6')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <h4>🍾 Oggetto Bonus (50 pts) - per livello</h4>
+                <p style="opacity:0.7;margin-bottom:15px;">Personalizza l'oggetto bonus per ogni livello</p>
+                <div class="emoji-grid">
+                    <div class="form-group">
+                        <label>Livello 1</label>
+                        <input type="text" id="vodka-1" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka1" onclick="triggerUpload('vodka1')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka1">📷</div>
+                            <img class="image-preview" id="preview-vodka1" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka1')" style="display:none" id="clear-vodka1">🗑️</button>
+                        <input type="file" id="file-vodka1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka1')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 2</label>
+                        <input type="text" id="vodka-2" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka2" onclick="triggerUpload('vodka2')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka2">📷</div>
+                            <img class="image-preview" id="preview-vodka2" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka2')" style="display:none" id="clear-vodka2">🗑️</button>
+                        <input type="file" id="file-vodka2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka2')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 3</label>
+                        <input type="text" id="vodka-3" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka3" onclick="triggerUpload('vodka3')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka3">📷</div>
+                            <img class="image-preview" id="preview-vodka3" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka3')" style="display:none" id="clear-vodka3">🗑️</button>
+                        <input type="file" id="file-vodka3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka3')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 4</label>
+                        <input type="text" id="vodka-4" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka4" onclick="triggerUpload('vodka4')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka4">📷</div>
+                            <img class="image-preview" id="preview-vodka4" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka4')" style="display:none" id="clear-vodka4">🗑️</button>
+                        <input type="file" id="file-vodka4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka4')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 5</label>
+                        <input type="text" id="vodka-5" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka5" onclick="triggerUpload('vodka5')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka5">📷</div>
+                            <img class="image-preview" id="preview-vodka5" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka5')" style="display:none" id="clear-vodka5">🗑️</button>
+                        <input type="file" id="file-vodka5" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka5')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 6+</label>
+                        <input type="text" id="vodka-6" value="🍾" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-vodka6" onclick="triggerUpload('vodka6')">
+                            <div class="image-upload-placeholder" id="placeholder-vodka6">📷</div>
+                            <img class="image-preview" id="preview-vodka6" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('vodka6')" style="display:none" id="clear-vodka6">🗑️</button>
+                        <input type="file" id="file-vodka6" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'vodka6')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <h4>📜 Power-Up - per livello</h4>
+                <p style="opacity:0.7;margin-bottom:15px;">Personalizza il power-up per ogni livello</p>
+                <div class="emoji-grid">
+                    <div class="form-group">
+                        <label>Livello 1</label>
+                        <input type="text" id="powerup-1" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup1" onclick="triggerUpload('powerup1')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup1">📷</div>
+                            <img class="image-preview" id="preview-powerup1" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup1')" style="display:none" id="clear-powerup1">🗑️</button>
+                        <input type="file" id="file-powerup1" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup1')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 2</label>
+                        <input type="text" id="powerup-2" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup2" onclick="triggerUpload('powerup2')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup2">📷</div>
+                            <img class="image-preview" id="preview-powerup2" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup2')" style="display:none" id="clear-powerup2">🗑️</button>
+                        <input type="file" id="file-powerup2" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup2')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 3</label>
+                        <input type="text" id="powerup-3" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup3" onclick="triggerUpload('powerup3')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup3">📷</div>
+                            <img class="image-preview" id="preview-powerup3" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup3')" style="display:none" id="clear-powerup3">🗑️</button>
+                        <input type="file" id="file-powerup3" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup3')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 4</label>
+                        <input type="text" id="powerup-4" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup4" onclick="triggerUpload('powerup4')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup4">📷</div>
+                            <img class="image-preview" id="preview-powerup4" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup4')" style="display:none" id="clear-powerup4">🗑️</button>
+                        <input type="file" id="file-powerup4" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup4')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 5</label>
+                        <input type="text" id="powerup-5" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup5" onclick="triggerUpload('powerup5')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup5">📷</div>
+                            <img class="image-preview" id="preview-powerup5" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup5')" style="display:none" id="clear-powerup5">🗑️</button>
+                        <input type="file" id="file-powerup5" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup5')">
+                    </div>
+                    <div class="form-group">
+                        <label>Livello 6+</label>
+                        <input type="text" id="powerup-6" value="📜" placeholder="Emoji" style="margin-bottom:8px">
+                        <div class="image-upload-box" id="upload-powerup6" onclick="triggerUpload('powerup6')">
+                            <div class="image-upload-placeholder" id="placeholder-powerup6">📷</div>
+                            <img class="image-preview" id="preview-powerup6" style="display:none">
+                        </div>
+                        <button class="clear-image-btn" onclick="clearImage('powerup6')" style="display:none" id="clear-powerup6">🗑️</button>
+                        <input type="file" id="file-powerup6" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'powerup6')">
                     </div>
                 </div>
             </div>
@@ -532,7 +736,7 @@
 
     <script>
         // Password admin (deve corrispondere a quella in api/db_config.php)
-        let adminPassword = localStorage.getItem('100giorni_admin_password') || '';
+        let adminPassword = localStorage.getItem('cda_admin_password') || '';
         
         // Storage per URL immagini caricate sul server
         let uploadedImages = {};
@@ -556,7 +760,7 @@
                 const pwd = prompt('Inserisci la password admin:');
                 if (pwd) {
                     adminPassword = pwd;
-                    localStorage.setItem('100giorni_admin_password', pwd);
+                    localStorage.setItem('cda_admin_password', pwd);
                 }
             }
             return adminPassword;
@@ -620,7 +824,8 @@
                 throw new Error(data.error || 'Errore upload');
             }
             
-            return data.url;
+            // L'API restituisce data.image.url
+            return data.image?.url || data.url;
         }
 
         async function clearImage(key) {
@@ -701,7 +906,7 @@
             }
             
             // Fallback to localStorage
-            const saved = localStorage.getItem('100giorni_admin_config');
+            const saved = localStorage.getItem('cda_admin_config');
             if (saved) {
                 try {
                     applyConfigToForm(JSON.parse(saved));
@@ -721,6 +926,11 @@
                     loadImagePreview('logo', config.event.logo);
                 }
             }
+            // App title e description (per condivisione link)
+            if (config.app) {
+                document.getElementById('app-title').value = config.app.title || 'Caffè Dell\'Angolo - Il Gioco';
+                document.getElementById('app-description').value = config.app.description || 'Unisciti al gruppo e gioca in stile Pac-Man!';
+            }
             if (config.colors) {
                 document.getElementById('color-gold').value = config.colors.gold || '#ffd700';
                 document.getElementById('color-cyan').value = config.colors.cyan || '#4ecdc4';
@@ -729,10 +939,7 @@
                 document.getElementById('color-wall').value = config.colors.wall || '#1a1a3e';
             }
             if (config.emojis) {
-                document.getElementById('emoji-enemy').value = config.emojis.enemy || '👨‍🏫';
-                document.getElementById('emoji-beer').value = config.emojis.beer || '🍺';
-                document.getElementById('emoji-vodka').value = config.emojis.vodka || '🍾';
-                document.getElementById('emoji-powerup').value = config.emojis.powerup || '📜';
+                document.getElementById('emoji-enemy').value = config.emojis.enemy || '�';
                 document.getElementById('emoji-scared').value = config.emojis.scared || '😰';
                 if (config.emojis.players) {
                     config.emojis.players.forEach((e, i) => {
@@ -740,19 +947,74 @@
                         if (el) el.value = e;
                     });
                 }
+                // Oggetti per livello
+                if (config.emojis.beers) {
+                    config.emojis.beers.forEach((e, i) => {
+                        const el = document.getElementById('beer-' + (i + 1));
+                        if (el) el.value = e;
+                    });
+                } else if (config.emojis.beer) {
+                    // Retrocompatibilità: valore singolo -> tutti i livelli
+                    for (let i = 1; i <= 6; i++) {
+                        const el = document.getElementById('beer-' + i);
+                        if (el) el.value = config.emojis.beer;
+                    }
+                }
+                if (config.emojis.vodkas) {
+                    config.emojis.vodkas.forEach((e, i) => {
+                        const el = document.getElementById('vodka-' + (i + 1));
+                        if (el) el.value = e;
+                    });
+                } else if (config.emojis.vodka) {
+                    for (let i = 1; i <= 6; i++) {
+                        const el = document.getElementById('vodka-' + i);
+                        if (el) el.value = config.emojis.vodka;
+                    }
+                }
+                if (config.emojis.powerups) {
+                    config.emojis.powerups.forEach((e, i) => {
+                        const el = document.getElementById('powerup-' + (i + 1));
+                        if (el) el.value = e;
+                    });
+                } else if (config.emojis.powerup) {
+                    for (let i = 1; i <= 6; i++) {
+                        const el = document.getElementById('powerup-' + i);
+                        if (el) el.value = config.emojis.powerup;
+                    }
+                }
             }
             // Load images (now URLs from server)
             if (config.images) {
                 if (config.images.enemy) loadImagePreview('enemy', config.images.enemy);
-                if (config.images.beer) loadImagePreview('beer', config.images.beer);
-                if (config.images.vodka) loadImagePreview('vodka', config.images.vodka);
-                if (config.images.powerup) loadImagePreview('powerup', config.images.powerup);
                 if (config.images.scared) loadImagePreview('scared', config.images.scared);
                 if (config.images.logo) loadImagePreview('logo', config.images.logo);
+                if (config.images.favicon) loadImagePreview('favicon', config.images.favicon);
                 if (config.images.players) {
                     config.images.players.forEach((url, i) => {
                         if (url) loadImagePreview('player' + (i + 1), url);
                     });
+                }
+                // Immagini oggetti per livello
+                if (config.images.beers) {
+                    config.images.beers.forEach((url, i) => {
+                        if (url) loadImagePreview('beer' + (i + 1), url);
+                    });
+                } else if (config.images.beer) {
+                    loadImagePreview('beer1', config.images.beer);
+                }
+                if (config.images.vodkas) {
+                    config.images.vodkas.forEach((url, i) => {
+                        if (url) loadImagePreview('vodka' + (i + 1), url);
+                    });
+                } else if (config.images.vodka) {
+                    loadImagePreview('vodka1', config.images.vodka);
+                }
+                if (config.images.powerups) {
+                    config.images.powerups.forEach((url, i) => {
+                        if (url) loadImagePreview('powerup' + (i + 1), url);
+                    });
+                } else if (config.images.powerup) {
+                    loadImagePreview('powerup1', config.images.powerup);
                 }
             }
             // Load UI icons
@@ -776,6 +1038,10 @@
                     date: document.getElementById('event-date').value,
                     location: document.getElementById('event-location').value
                 },
+                app: {
+                    title: document.getElementById('app-title').value,
+                    description: document.getElementById('app-description').value
+                },
                 colors: {
                     gold: document.getElementById('color-gold').value,
                     cyan: document.getElementById('color-cyan').value,
@@ -785,10 +1051,11 @@
                 },
                 emojis: {
                     enemy: document.getElementById('emoji-enemy').value,
-                    beer: document.getElementById('emoji-beer').value,
-                    vodka: document.getElementById('emoji-vodka').value,
-                    powerup: document.getElementById('emoji-powerup').value,
                     scared: document.getElementById('emoji-scared').value,
+                    // Retrocompatibilità: usa il primo livello come valore singolo
+                    beer: document.getElementById('beer-1').value,
+                    vodka: document.getElementById('vodka-1').value,
+                    powerup: document.getElementById('powerup-1').value,
                     players: [
                         document.getElementById('player-1').value,
                         document.getElementById('player-2').value,
@@ -796,6 +1063,30 @@
                         document.getElementById('player-4').value,
                         document.getElementById('player-5').value,
                         document.getElementById('player-6').value
+                    ],
+                    beers: [
+                        document.getElementById('beer-1').value,
+                        document.getElementById('beer-2').value,
+                        document.getElementById('beer-3').value,
+                        document.getElementById('beer-4').value,
+                        document.getElementById('beer-5').value,
+                        document.getElementById('beer-6').value
+                    ],
+                    vodkas: [
+                        document.getElementById('vodka-1').value,
+                        document.getElementById('vodka-2').value,
+                        document.getElementById('vodka-3').value,
+                        document.getElementById('vodka-4').value,
+                        document.getElementById('vodka-5').value,
+                        document.getElementById('vodka-6').value
+                    ],
+                    powerups: [
+                        document.getElementById('powerup-1').value,
+                        document.getElementById('powerup-2').value,
+                        document.getElementById('powerup-3').value,
+                        document.getElementById('powerup-4').value,
+                        document.getElementById('powerup-5').value,
+                        document.getElementById('powerup-6').value
                     ]
                 },
                 uiIcons: {
@@ -815,24 +1106,45 @@
                 config.event.logo = uploadedImages.logo;
             }
             
-            // Aggiungi immagini personaggi se presenti
-            if (Object.keys(uploadedImages).length > 0) {
-                config.images = {
-                    enemy: uploadedImages.enemy || null,
-                    beer: uploadedImages.beer || null,
-                    vodka: uploadedImages.vodka || null,
-                    powerup: uploadedImages.powerup || null,
-                    scared: uploadedImages.scared || null,
-                    players: [
-                        uploadedImages.player1 || null,
-                        uploadedImages.player2 || null,
-                        uploadedImages.player3 || null,
-                        uploadedImages.player4 || null,
-                        uploadedImages.player5 || null,
-                        uploadedImages.player6 || null
-                    ]
-                };
-            }
+            // Aggiungi immagini sempre, anche se vuote
+            config.images = {
+                enemy: uploadedImages.enemy || null,
+                scared: uploadedImages.scared || null,
+                logo: uploadedImages.logo || null,
+                favicon: uploadedImages.favicon || null,
+                players: [
+                    uploadedImages.player1 || null,
+                    uploadedImages.player2 || null,
+                    uploadedImages.player3 || null,
+                    uploadedImages.player4 || null,
+                    uploadedImages.player5 || null,
+                    uploadedImages.player6 || null
+                ],
+                beers: [
+                    uploadedImages.beer1 || null,
+                    uploadedImages.beer2 || null,
+                    uploadedImages.beer3 || null,
+                    uploadedImages.beer4 || null,
+                    uploadedImages.beer5 || null,
+                    uploadedImages.beer6 || null
+                ],
+                vodkas: [
+                    uploadedImages.vodka1 || null,
+                    uploadedImages.vodka2 || null,
+                    uploadedImages.vodka3 || null,
+                    uploadedImages.vodka4 || null,
+                    uploadedImages.vodka5 || null,
+                    uploadedImages.vodka6 || null
+                ],
+                powerups: [
+                    uploadedImages.powerup1 || null,
+                    uploadedImages.powerup2 || null,
+                    uploadedImages.powerup3 || null,
+                    uploadedImages.powerup4 || null,
+                    uploadedImages.powerup5 || null,
+                    uploadedImages.powerup6 || null
+                ]
+            };
             
             return config;
         }
@@ -875,7 +1187,7 @@
                 
                 if (data.success) {
                     // Also save to localStorage as backup
-                    localStorage.setItem('100giorni_admin_config', JSON.stringify({
+                    localStorage.setItem('cda_admin_config', JSON.stringify({
                         ...config,
                         images: uploadedImages
                     }));
@@ -888,7 +1200,7 @@
                 console.error('Save error:', e);
                 // Fallback: save only to localStorage
                 const config = getConfig();
-                localStorage.setItem('100giorni_admin_config', JSON.stringify(config));
+                localStorage.setItem('cda_admin_config', JSON.stringify(config));
                 showToast('⚠️ Salvato solo in locale: ' + e.message);
             }
         }
@@ -902,7 +1214,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = '100giorni-config.json';
+            a.download = 'cda-config.json';
             a.click();
             URL.revokeObjectURL(url);
             showToast('📤 Configurazione esportata!');
@@ -929,10 +1241,12 @@
             document.getElementById('preview-title').textContent = '🎓 ' + document.getElementById('event-title').value + ' 🎓';
             document.getElementById('preview-date').textContent = '📅 ' + document.getElementById('event-date').value;
             document.getElementById('preview-location').textContent = '📍 ' + document.getElementById('event-location').value;
+            document.getElementById('preview-app-title').textContent = document.getElementById('app-title').value;
+            document.getElementById('preview-app-desc').textContent = document.getElementById('app-description').value;
         }
 
         // Live preview
-        ['event-title', 'event-date', 'event-location'].forEach(id => {
+        ['event-title', 'event-date', 'event-location', 'app-title', 'app-description'].forEach(id => {
             document.getElementById(id).addEventListener('input', updatePreview);
         });
 

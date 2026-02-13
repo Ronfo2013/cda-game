@@ -1,9 +1,106 @@
 {
     "event": {
-        "title": "Test Evento",
-        "date": "15 Marzo 2026",
-        "location": "Test Location"
+        "title": "  ",
+        "date": "Gioca Anche tu! ",
+        "location": "",
+        "logo": "upload\/logo_1770923184_5511b8ce.png"
     },
-    "colors": [],
-    "emojis": []
+    "app": {
+        "title": "Caffè Dell'Angolo - Il Gioco",
+        "description": "Unisciti al gruppo e  gioca in stile Pac-Man!"
+    },
+    "colors": {
+        "gold": "#ffd700",
+        "cyan": "#4ecdc4",
+        "bg": "#0f0f1e",
+        "pink": "#ec4899",
+        "wall": "#1a1a3e"
+    },
+    "emojis": {
+        "enemy": "👨‍🏫",
+        "scared": "😰",
+        "beer": "🍺",
+        "vodka": "🍾",
+        "powerup": "🐖",
+        "players": [
+            "🎓",
+            "🎓",
+            "🎓",
+            "🎓",
+            "🎓",
+            "🎓"
+        ],
+        "beers": [
+            "🍺",
+            "🍺",
+            "🍺",
+            "🍺",
+            "🍺",
+            "🍺"
+        ],
+        "vodkas": [
+            "🍾",
+            "🍾",
+            "🍾",
+            "🍾",
+            "🍾",
+            "🍾"
+        ],
+        "powerups": [
+            "🐖",
+            "🐖",
+            "🐖",
+            "🐖",
+            "🐖",
+            "🐖"
+        ]
+    },
+    "uiIcons": {
+        "title": "",
+        "date": "",
+        "location": "📍",
+        "leaderboard": "🏆",
+        "score": "🏆",
+        "level": "📊",
+        "lives": "❤️",
+        "swipe": "👆"
+    },
+    "images": {
+        "enemy": "upload\/enemy_1770919733_f483a5c3.png",
+        "scared": null,
+        "logo": "upload\/logo_1770923184_5511b8ce.png",
+        "favicon": "upload\/favicon_1770923158_db5e3546.png",
+        "players": [
+            "upload\/player1_1770919747_9b560690.png",
+            "upload\/player2_1770922229_e27a74be.png",
+            "upload\/player3_1770922229_be970d1e.png",
+            "upload\/player4_1770922229_317f4403.png",
+            "upload\/player5_1770922229_35d13915.png",
+            "upload\/player6_1770922229_1dc4819c.png"
+        ],
+        "beers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "vodkas": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "powerups": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ]
+    }
 }

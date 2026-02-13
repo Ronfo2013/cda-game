@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview Labirinti - Tutti i Livelli</title>
+    <style>
+        body {
+            background: #0a0a1a;
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #ffd700; text-align: center; margin-bottom: 30px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .maze-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .maze-card h2 {
+            color: #4ecdc4;
+            margin: 0 0 5px;
+        }
+        .maze-card .subtitle {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        .maze-card .info {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        canvas {
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Preview Labirinti - Tutti i Livelli</h1>
+    
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#1a1a3e;border-color:#0066ff"></div> Muro</div>
+        <div class="legend-item"><div class="legend-color" style="background:#0f0f1e"></div> Vuoto</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffd700"></div> 🍺 Birra (10pt)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff6b6b"></div> 🍾 Vodka (50pt)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#00ff88"></div> 📜 Power-up</div>
+        <div class="legend-item"><div class="legend-color" style="background:#333"></div> Ghost House</div>
+    </div>
+
+    <div class="grid" id="mazes"></div>
+
+    <script>
+    const MAZE_TEMPLATES = [
+        // LIVELLO 1 - "Arena Aperta"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,1,2,2,3,2,2,1,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,2,1,2,2,2,1,2,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,2,1,2,2,2,1,2,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,1,2,2,3,2,2,1,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        // LIVELLO 2 - "Classico"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,1,2,2,2,2,4,1],
+            [1,2,1,1,2,2,2,2,2,1,1,2,1],
+            [1,3,1,1,2,1,1,1,2,1,1,3,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,1,2,1,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,1,1,2,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,3,1,2,1,1,2,1,1,2,1,3,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,1,1,2,1,1,2,2,2,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,4,2,2,2,1,2,1,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        // LIVELLO 3 - "Crocevia"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,2,2,2,2,2,1,2,2,2,2,2,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,1,1,3,1,1,2,2,2,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,1,1,3,1,1,2,2,2,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,2,2,1,2,2,2,2,2,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,2,2,2,2,1,1,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        // LIVELLO 4 - "Corridoi"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,2,1,1,2,1,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,2,1,1,1,2,1],
+            [1,2,2,2,2,2,3,2,2,2,2,2,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,2,2,2,2,2,3,2,2,2,2,2,1],
+            [1,2,1,1,1,2,2,2,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,1,2,1,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,2,1,1,1,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        // LIVELLO 5 - "Isola"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,1,1,2,1,1,2,2,2,1],
+            [1,2,2,1,1,2,2,2,1,1,2,2,1],
+            [1,2,2,2,2,2,3,2,2,2,2,2,1],
+            [1,2,2,1,2,2,2,2,2,1,2,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,2,1,2,2,2,2,2,1,2,2,1],
+            [1,2,2,2,2,2,3,2,2,2,2,2,1],
+            [1,2,2,1,1,2,2,2,1,1,2,2,1],
+            [1,2,2,2,1,1,2,1,1,2,2,2,1],
+            [1,2,1,2,2,2,2,2,2,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,2,1,2,1,2,2,1,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        // LIVELLO 6 - "Labirinto"
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,1,2,2,2,1,2,2,4,1],
+            [1,2,1,2,2,2,1,2,2,2,1,2,1],
+            [1,2,2,2,1,2,3,2,1,2,2,2,1],
+            [1,1,2,1,1,2,2,2,1,1,2,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [0,0,0,2,1,0,0,0,1,2,0,0,0],
+            [1,1,1,2,1,0,0,0,1,2,1,1,1],
+            [1,2,1,2,1,2,2,2,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,2,2,2,2,1,1,2,1],
+            [1,2,2,2,1,2,3,2,1,2,2,2,1],
+            [1,2,1,2,2,2,1,2,2,2,1,2,1],
+            [1,2,2,1,2,2,2,2,2,1,2,2,1],
+            [1,2,1,2,1,2,1,2,1,2,1,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ]
+    ];
+
+    const NAMES = [
+        'Livello 1 — "Arena Aperta"',
+        'Livello 2 — "Classico"',
+        'Livello 3 — "Crocevia"',
+        'Livello 4 — "Corridoi"',
+        'Livello 5 — "Isola"',
+        'Livello 6 — "Labirinto"'
+    ];
+
+    const ENEMIES = [1, 2, 3, 4, 5, 6];
+    const DESCS = [
+        'Pochi muri, spazi aperti — 1 nemico',
+        'Layout classico Pac-Man — 2 nemici',
+        '4 quadranti separati da croci — 3 nemici',
+        'Lunghi corridoi, pochi incroci — 4 nemici',
+        'Isola centrale con percorsi — 5 nemici',
+        'Passaggi stretti e complessi — 6 nemici'
+    ];
+
+    const TILE = 22;
+    const COLS = 13, ROWS = 19;
+
+    const COLORS = {
+        0: '#0f0f1e',      // empty / ghost house
+        1: '#1a1a3e',      // wall
+        2: '#ffd700',      // beer
+        3: '#ff6b6b',      // vodka
+        4: '#00ff88'       // powerup
+    };
+
+    const EMOJIS = {
+        2: '🍺',
+        3: '🍾',
+        4: '📜'
+    };
+
+    const container = document.getElementById('mazes');
+
+    MAZE_TEMPLATES.forEach((maze, idx) => {
+        const card = document.createElement('div');
+        card.className = 'maze-card';
+
+        const h2 = document.createElement('h2');
+        h2.textContent = NAMES[idx];
+        card.appendChild(h2);
+
+        const sub = document.createElement('div');
+        sub.className = 'subtitle';
+        sub.textContent = DESCS[idx];
+        card.appendChild(sub);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = COLS * TILE;
+        canvas.height = ROWS * TILE;
+        card.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+
+        // Draw maze
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
+                const tile = maze[y][x];
+                const px = x * TILE;
+                const py = y * TILE;
+
+                if (tile === 1) {
+                    ctx.fillStyle = '#1a1a3e';
+                    ctx.fillRect(px, py, TILE, TILE);
+                    ctx.strokeStyle = '#0066ff';
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeRect(px + 1.5, py + 1.5, TILE - 3, TILE - 3);
+                } else if (tile === 0) {
+                    // Ghost house
+                    ctx.fillStyle = '#151530';
+                    ctx.fillRect(px, py, TILE, TILE);
+                    // Draw dashed border for ghost house area
+                    if (y >= 7 && y <= 9 && x >= 4 && x <= 8) {
+                        ctx.strokeStyle = '#ff006644';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([3, 3]);
+                        ctx.strokeRect(px + 1, py + 1, TILE - 2, TILE - 2);
+                        ctx.setLineDash([]);
+                    }
+                } else {
+                    ctx.fillStyle = '#0f0f1e';
+                    ctx.fillRect(px, py, TILE, TILE);
+
+                    if (tile >= 2) {
+                        const emoji = EMOJIS[tile];
+                        const fontSize = tile === 4 ? TILE * 0.75 : TILE * 0.6;
+                        ctx.font = `${fontSize}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(emoji, px + TILE/2, py + TILE/2 + 1);
+                    }
+                }
+            }
+        }
+
+        // Draw player start position
+        ctx.font = `${TILE * 0.8}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🎓', 6 * TILE + TILE/2, 12 * TILE + TILE/2 + 1);
+
+        // Draw enemies in ghost house
+        const enemyPositions = [
+            {x:6, y:8}, {x:5, y:8}, {x:7, y:8},
+            {x:6, y:7}, {x:5, y:9}, {x:7, y:9}
+        ];
+        const numEnemies = ENEMIES[idx];
+        ctx.font = `${TILE * 0.7}px Arial`;
+        for (let i = 0; i < numEnemies; i++) {
+            const pos = enemyPositions[i];
+            ctx.fillText('👨‍🏫', pos.x * TILE + TILE/2, pos.y * TILE + TILE/2 + 1);
+        }
+
+        // Info line
+        const info = document.createElement('div');
+        info.className = 'info';
+        // Count items
+        let beers = 0, vodkas = 0, powerups = 0;
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
+                if (maze[y][x] === 2) beers++;
+                if (maze[y][x] === 3) vodkas++;
+                if (maze[y][x] === 4) powerups++;
+            }
+        }
+        info.textContent = `🍺 ${beers} birre · 🍾 ${vodkas} vodke · 📜 ${powerups} power-up · 👨‍🏫 ${numEnemies} nemici`;
+        card.appendChild(info);
+
+        container.appendChild(card);
+    });
+    </script>
+</body>
+</html>

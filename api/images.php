@@ -1,6 +1,6 @@
 <?php
 /**
- * API Upload Immagini - i 100 Giorni Game
+ * API Upload Immagini - Caffè Dell'Angolo Game
  * 
  * Endpoint per caricare, ottenere e eliminare immagini personalizzate
  */
@@ -38,7 +38,10 @@ function validateAdminPassword(): bool {
 
 function validateImageKey(string $key): bool {
     $validKeys = ['player1', 'player2', 'player3', 'player4', 'player5', 'player6', 
-                  'enemy', 'beer', 'vodka', 'powerup', 'scared', 'logo'];
+                  'enemy', 'beer', 'vodka', 'powerup', 'scared', 'logo', 'favicon',
+                  'beer1', 'beer2', 'beer3', 'beer4', 'beer5', 'beer6',
+                  'vodka1', 'vodka2', 'vodka3', 'vodka4', 'vodka5', 'vodka6',
+                  'powerup1', 'powerup2', 'powerup3', 'powerup4', 'powerup5', 'powerup6'];
     return in_array($key, $validKeys, true);
 }
 

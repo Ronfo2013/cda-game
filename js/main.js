@@ -14,45 +14,87 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     checkTutorial();
     
-    // Applica icone UI dopo che config è caricato
-    setTimeout(applyUIIcons, 100);
+    // Applica icone UI: subito se config già pronta, altrimenti aspetta evento
+    if (ADMIN_CONFIG) {
+        applyUIIcons();
+    }
+    window.addEventListener('gameConfigReady', applyUIIcons);
     
-    // Avvia musica title screen
-    setTimeout(() => {
-        AudioManager.playTitleMusic();
-    }, 500);
+    // Avvia musica titolo (si sblocca al primo tocco dell'utente grazie a AudioManager.setupUnlockListeners)
+    AudioManager.playTitleMusic();
 });
 
 // Applica icone UI dalla configurazione admin
 function applyUIIcons() {
-    if (!ADMIN_CONFIG || !ADMIN_CONFIG.uiIcons) return;
+    if (!ADMIN_CONFIG) return;
     
-    const icons = ADMIN_CONFIG.uiIcons;
-    
-    // Schermata titolo
-    const setIcon = (id, value) => {
-        const el = document.getElementById(id);
-        if (el && value) el.textContent = value;
-    };
-    
-    setIcon('icon-title-left', icons.title);
-    setIcon('icon-title-right', icons.title);
-    setIcon('icon-date', icons.date);
-    setIcon('icon-location', icons.location);
-    setIcon('icon-leaderboard', icons.leaderboard);
-    setIcon('icon-swipe', icons.swipe);
-    
-    // HUD in-game
-    setIcon('icon-hud-score', icons.score);
-    setIcon('icon-hud-level', icons.level);
-    setIcon('icon-hud-lives', icons.lives);
+    // Applica icone UI (stringa vuota = campo vuoto intenzionale)
+    if (ADMIN_CONFIG.uiIcons) {
+        const icons = ADMIN_CONFIG.uiIcons;
+        
+        // Schermata titolo
+        const setIcon = (id, value) => {
+            const el = document.getElementById(id);
+            if (el && value !== undefined) el.textContent = value;
+        };
+        
+        setIcon('icon-title-left', icons.title);
+        setIcon('icon-title-right', icons.title);
+        setIcon('icon-date', icons.date);
+        setIcon('icon-location', icons.location);
+        setIcon('icon-leaderboard', icons.leaderboard);
+        setIcon('icon-swipe', icons.swipe);
+        
+        // HUD in-game
+        setIcon('icon-hud-score', icons.score);
+        setIcon('icon-hud-level', icons.level);
+        setIcon('icon-hud-lives', icons.lives);
+    }
     
     // Istruzioni (usa emoji dai personaggi se disponibili)
     if (ADMIN_CONFIG.emojis) {
+        const setIcon = (id, value) => {
+            const el = document.getElementById(id);
+            if (el && value !== undefined) el.textContent = value;
+        };
         setIcon('icon-inst-beer', ADMIN_CONFIG.emojis.beer);
         setIcon('icon-inst-enemy', ADMIN_CONFIG.emojis.enemy);
         setIcon('icon-inst-powerup', ADMIN_CONFIG.emojis.powerup);
         setIcon('icon-powerup-active', ADMIN_CONFIG.emojis.powerup);
+    }
+    
+    // Applica logo dal server (images.logo o event.logo)
+    const logoUrl = (ADMIN_CONFIG.images && ADMIN_CONFIG.images.logo) || 
+                    (ADMIN_CONFIG.event && ADMIN_CONFIG.event.logo);
+    if (logoUrl) {
+        const logoContainer = document.getElementById('event-logo-container');
+        const logoImg = document.getElementById('event-logo');
+        if (logoContainer && logoImg) {
+            logoImg.src = logoUrl;
+            logoContainer.style.display = 'block';
+        }
+    }
+    
+    // Applica testi evento dal server (modifica solo gli span di testo, non le icone)
+    if (ADMIN_CONFIG.event) {
+        const cfg = ADMIN_CONFIG.event;
+        const textTitle = document.getElementById('text-title');
+        const textDate = document.getElementById('text-date');
+        const textLoc = document.getElementById('text-location');
+        
+        if (cfg.title !== undefined && textTitle) textTitle.textContent = cfg.title;
+        if (cfg.date !== undefined && textDate) textDate.textContent = cfg.date;
+        if (cfg.location !== undefined && textLoc) textLoc.textContent = cfg.location;
+        
+        // Aggiorna titolo pagina e favicon dal logo
+        if (cfg.title) document.title = cfg.title + ' - The Game';
+        if (cfg.logo) {
+            const faviconEl = document.getElementById('favicon-link');
+            if (faviconEl) {
+                faviconEl.href = cfg.logo;
+                faviconEl.type = 'image/png';
+            }
+        }
     }
 }
 
