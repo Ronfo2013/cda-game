@@ -1,5 +1,5 @@
 // Service Worker - Caffè Dell'Angolo - Il Gioco
-const CACHE_NAME = 'cda-game-v1';
+const CACHE_NAME = 'cda-game-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
