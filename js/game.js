@@ -153,10 +153,15 @@ const Game = {
             localStorage.setItem(CONFIG.STORAGE_HIGHSCORE, this.highScore);
         }
         
-        // Show nickname input screen
+        // Prepare nickname screen data (used when player taps Classifica)
         document.getElementById('nickname-score').textContent = this.score;
         document.getElementById('nickname-input').value = '';
-        document.getElementById('nickname-screen').classList.add('active');
+        
+        // Show game over overlay with score and high score
+        document.getElementById('overlay-title').textContent = '💀 GAME OVER';
+        document.getElementById('final-score').textContent = this.score;
+        document.getElementById('high-score').textContent = this.highScore;
+        document.getElementById('overlay').classList.add('active');
     },
     
     // ========== MAZE MANAGEMENT ==========
@@ -296,10 +301,15 @@ const Game = {
         const extraDuration = this.level <= 3 ? 90 : 0;
         this.powerUpTimer = CONFIG.POWERUP_DURATION + extraDuration;
         this.enemies.forEach(e => e.scared = true);
-        document.getElementById('powerup-indicator').textContent = `📜 INVINCIBILE ${Math.ceil(this.powerUpTimer / 60)}s`;
+        document.getElementById('powerup-indicator').textContent = `${this.getLevelPowerupEmoji()} INVINCIBILE ${Math.ceil(this.powerUpTimer / 60)}s`;
         document.getElementById('powerup-indicator').style.display = 'block';
         AudioManager.playPowerUp();
         VibrationManager.vibrate(100);
+    },
+
+    getLevelPowerupEmoji() {
+        const levelIndex = Math.min(this.level - 1, 5);
+        return (CONFIG.EMOJI_POWERUPS && CONFIG.EMOJI_POWERUPS[levelIndex]) || CONFIG.EMOJI_POWERUP;
     },
     
     // ========== ENEMY MANAGEMENT ==========
@@ -707,7 +717,7 @@ const Game = {
         if (this.powerUpActive) {
             this.powerUpTimer--;
             document.getElementById('powerup-indicator').textContent =
-                `📜 INVINCIBILE ${Math.max(1, Math.ceil(this.powerUpTimer / 60))}s`;
+                `${this.getLevelPowerupEmoji()} INVINCIBILE ${Math.max(1, Math.ceil(this.powerUpTimer / 60))}s`;
             if (this.powerUpTimer <= 0) {
                 this.powerUpActive = false;
                 this.enemies.forEach(e => e.scared = false);

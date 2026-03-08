@@ -200,6 +200,11 @@ function setupEventListeners() {
         restartGame();
     });
 
+    document.getElementById('leaderboard-from-overlay-btn').addEventListener('click', () => {
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('nickname-screen').classList.add('active');
+    });
+
     document.getElementById('menu-btn').addEventListener('click', () => {
         goToTitle();
     });
@@ -296,6 +301,8 @@ function startGame() {
 
 function restartGame() {
     document.getElementById('overlay').classList.remove('active');
+    document.getElementById('game-container').classList.add('active');
+    document.body.classList.add('in-game');
 
     Game.restart();
     applyControlMode();
@@ -305,6 +312,7 @@ function goToTitle() {
     document.getElementById('overlay').classList.remove('active');
     document.getElementById('pause-overlay').classList.remove('active');
     document.getElementById('nickname-screen').classList.remove('active');
+    LeaderboardManager.hideLeaderboardScreen();
     document.getElementById('game-container').classList.remove('active');
     document.getElementById('title-screen').style.display = 'flex';
     document.body.classList.remove('in-game');
