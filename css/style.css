@@ -665,43 +665,6 @@ body {
     padding-bottom: 20px;
 }
 
-/* ========== D-PAD CONTROLS ========== */
-#dpad-container {
-    display: none;
-    width: 180px;
-    height: 180px;
-    position: fixed;
-    bottom: calc(16px + var(--sab, 0px));
-    right: 12px;
-    z-index: 140;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 8px;
-}
-
-#dpad-container.active {
-    display: grid;
-}
-
-.dpad-btn {
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 14px;
-    background: rgba(0, 0, 0, 0.62);
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.dpad-btn:active {
-    transform: scale(0.95);
-    background: rgba(255, 215, 0, 0.35);
-}
-
-.dpad-btn.up { grid-column: 2; grid-row: 1; }
-.dpad-btn.left { grid-column: 1; grid-row: 2; }
-.dpad-btn.right { grid-column: 3; grid-row: 2; }
-.dpad-btn.down { grid-column: 2; grid-row: 3; }
-
 /* ========== TUTORIAL OVERLAY ========== */
 #tutorial-overlay {
     position: fixed;
@@ -899,26 +862,6 @@ body {
 
 #title-screen .event-info .event-location {
     font-size: 1.1rem;
-}
-
-.control-mode-selector {
-    margin-top: 14px;
-    display: flex;
-    gap: 10px;
-}
-
-.mode-btn {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    padding: 8px 14px;
-    font-size: 0.95rem;
-}
-
-.mode-btn.active {
-    background: rgba(78, 205, 196, 0.28);
-    border-color: var(--color-cyan);
 }
 
 /* ========== FLOATING EMOJI ========== */
